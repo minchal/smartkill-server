@@ -13,4 +13,10 @@ register:
 login:
     pattern:  /login
     defaults: { _controller: SmartkillWebBundle:User:login }
+    
+login_check:
+    pattern:  /login_check
+    defaults: { _controller: SmartkillWebBundle:User:login }
 
+logout:
+    pattern:  /logout

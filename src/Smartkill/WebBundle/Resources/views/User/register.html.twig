@@ -1,0 +1,18 @@
+{% extends 'SmartkillWebBundle::layout.html.twig' %}
+{% form_theme form 'SmartkillWebBundle:Form:horizontal.html.twig' %}
+
+{% block title %}SmartKill - Zarejestruj się{% endblock %}
+
+{% block content %}
+
+	<div class="block">
+		<h2>Zarejestruj się</h2>
+		
+		<form action="{{ path('register')}}" method="post" {{ form_enctype(form) }} class="form-horizontal form-tight">
+			{{ form_widget(form) }}
+			
+			<button class="btn btn-primary btn-large pull-right" type="submit">Zarejestruj mnie!</button>
+		</form>
+	</div>
+
+{% endblock %}

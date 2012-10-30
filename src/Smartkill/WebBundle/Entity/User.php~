@@ -3,66 +3,103 @@
 namespace Smartkill\WebBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="Smartkill\WebBundle\Entity\UserRepository")
  */
-class User {
+class User implements UserInterface {
 	
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    private $id;
+    
+    /**
+     * @ORM\Column(type="string", unique=true, length=100)
+     * @Assert\NotBlank()
+     */
+    private $username;
+    
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $salt;
+    
+    /**
+     * @ORM\Column(type="string", length=40)
+     * @Assert\NotBlank()
+     */
+    private $password;
+    
+    /**
+     * @ORM\Column(type="string", unique=true, length=100)
+     * @Assert\NotBlank()
+     * @Assert\Email(message = "Podany adres e-mail jest nieprawidłowy.")
+     */
+    private $email;
+    
+    /**
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    private $isActive;
     
     /**
      * @ORM\Column(type="boolean")
      */
-    protected $admin;
-    
-    /**
-     * @ORM\Column(type="string", unique=true, length=100)
-     */
-    protected $login;
-    
-    /**
-     * @ORM\Column(type="string", length=40)
-     */
-    protected $pass;
-    
-    /**
-     * @ORM\Column(type="string", unique=true, length=100)
-     */
-    protected $email;
+    private $admin;
     
     /**
      * @ORM\Column(type="string", length=50)
      */
-    protected $avatar;
+    private $avatar;
     
     /**
      * @ORM\Column(type="datetime")
      */
-    protected $registeredAt;
+    private $registeredAt;
     
     /**
      * @ORM\Column(type="integer")
      */
-    protected $points;
+    private $points;
     
     /**
      * @ORM\Column(type="integer")
      */
-    protected $matchesPrey;
+    private $matchesPrey;
     
     /**
      * @ORM\Column(type="integer")
      */
-    protected $matchesHunter;
-
+    private $matchesHunter;
+	
+	public function __construct()
+    {
+        $this->isActive = true;
+        $this->salt = md5(uniqid(null, true));
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+	
+    /**
+     * @inheritDoc
+     */
+    public function eraseCredentials()
+    {
+    }
+    
     /**
      * Get id
      *
@@ -97,51 +134,74 @@ class User {
     }
 
     /**
-     * Set login
+     * Set username
      *
-     * @param string $login
+     * @param string $username
      * @return User
      */
-    public function setLogin($login)
+    public function setUsername($login)
     {
-        $this->login = $login;
+        $this->username = $login;
     
         return $this;
     }
 
     /**
-     * Get login
+     * Get username
      *
      * @return string 
      */
-    public function getLogin()
+    public function getUsername()
     {
-        return $this->login;
+        return $this->username;
     }
 
     /**
-     * Set pass
+     * Set password
      *
-     * @param string $pass
+     * @param string $password
      * @return User
      */
-    public function setPass($pass)
+    public function setPassword($password)
     {
-        $this->pass = $pass;
+        $this->password = $password;
     
         return $this;
     }
 
     /**
-     * Get pass
+     * Get password
      *
      * @return string 
      */
-    public function getPass()
+    public function getPassword()
     {
-        return $this->pass;
+        return $this->password;
     }
 
+    /**
+     * Set salt
+     *
+     * @param string $username
+     * @return User
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+    
+        return $this;
+    }
+
+    /**
+     * Get salt
+     *
+     * @return string 
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+    
     /**
      * Set email
      *

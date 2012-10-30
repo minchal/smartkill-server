@@ -11,11 +11,18 @@
 		<div class="navbar-inner">
 			<div class="container">
 				<div class="nav-collapse collapse">
-					<form action="{{ path('login') }}" method="post" class="navbar-form pull-right">
-						<input type="text" name="login" class="span2" placeholder="Login">
-						<input type="password" name="pass" class="span2" placeholder="Hasło">
-						<button type="submit" class="btn">Zaloguj</button>
-					</form>
+					{% if app.user %}
+						<p class="navbar-text pull-right">
+							Witaj <strong><a href="#" class="navbar-link">{{ app.user.username }}</a></strong> | 
+							<a href="{{ path('logout') }}" class="navbar-link">Wyloguj</a>
+						</p>
+					{% else %}
+						<form action="{{ path('login_check') }}" method="post" class="navbar-form pull-right">
+							<input type="text" name="_username" class="span2" placeholder="Login">
+							<input type="password" name="_password" class="span2" placeholder="Hasło">
+							<button type="submit" class="btn">Zaloguj</button>
+						</form>
+					{% endif %}
 					
 					<ul class="nav">
 						<li class="active"><a href="{{ path('index') }}">Home</a></li>
@@ -30,7 +37,7 @@
     
 	<section id="container" class="container">
 		<div id="top">
-			<a href="#"><img src="{{ asset('style/logo.png') }} " alt="" /></a>
+			<a href="{{ path('index') }}"><img src="{{ asset('style/logo.png') }} " alt="" /></a>
 			
 			<h1>
 				<a href="#">SmartKill</a><br />
@@ -39,7 +46,7 @@
 		</div>
 		
 		{% for flashMessage in app.session.flashbag.get('notice') %}
-			<div class="flash-message">
+			<div class="alert alert-error">
 				<em>Notice</em>: {{ flashMessage }}
 			</div>
 		{% endfor %}

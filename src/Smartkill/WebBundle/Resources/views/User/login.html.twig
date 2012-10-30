@@ -1,0 +1,33 @@
+{% extends 'SmartkillWebBundle::layout.html.twig' %}
+
+{% block title %}SmartKill - Zaloguj się{% endblock %}
+
+{% block content %}
+
+	<div class="block">
+		<h2>Zaloguj się</h2>
+		
+		<form action="{{ path('login_check') }}" method="post" class="form-horizontal" style="width: 400px;">
+		
+			{% if error %}
+				<div class="alert alert-error">{{ error.message }}</div>
+			{% endif %}
+
+			<div class="control-group">
+				<label class="control-label" for="l_login">Login:</label>
+				<div class="controls">
+					<input type="text" id="l_username" name="_username" />
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="l_pass">Hasło:</label>
+				<div class="controls">
+					<input type="password" id="l_password" name="_password" />
+				</div>
+			</div>
+			
+			<button class="btn btn-primary btn-large pull-right" type="submit">Zaloguj</button>
+		</form>
+	</div>
+
+{% endblock %}

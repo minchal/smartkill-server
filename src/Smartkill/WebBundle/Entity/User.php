@@ -4,11 +4,15 @@ namespace Smartkill\WebBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="Smartkill\WebBundle\Entity\UserRepository")
+ * @UniqueEntity("username")
+ * @UniqueEntity("email")
  */
 class User implements UserInterface {
 	
@@ -17,57 +21,88 @@ class User implements UserInterface {
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    private $id;
+    
+    /**
+     * @ORM\Column(type="string", unique=true, length=100)
+     * @Assert\NotBlank()
+     */
+    private $username;
+    
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $salt;
+    
+    /**
+     * @ORM\Column(type="string", length=128)
+     * @Assert\NotBlank()
+     * @Assert\MinLength(limit=5)
+     */
+    private $password;
+    
+    /**
+     * @ORM\Column(type="string", unique=true, length=100)
+     * @Assert\NotBlank()
+     * @Assert\Email()
+     */
+    private $email;
+    
+    /**
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    private $isActive = true;
     
     /**
      * @ORM\Column(type="boolean")
      */
-    protected $admin;
+    private $admin = false;
     
     /**
-     * @ORM\Column(type="string", unique=true, length=100)
-     * @Assert\NotBlank()
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
-    protected $username;
-    
-    /**
-     * @ORM\Column(type="string", length=40)
-     * @Assert\NotBlank()
-     */
-    protected $pass;
-    
-    /**
-     * @ORM\Column(type="string", unique=true, length=100)
-     * @Assert\NotBlank()
-     * @Assert\Email(message = "Podany adres e-mail jest nieprawidłowy.")
-     */
-    protected $email;
-    
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    protected $avatar;
+    private $avatar;
     
     /**
      * @ORM\Column(type="datetime")
      */
-    protected $registeredAt;
+    private $registeredAt;
     
     /**
      * @ORM\Column(type="integer")
      */
-    protected $points;
+    private $points = 0;
     
     /**
      * @ORM\Column(type="integer")
      */
-    protected $matchesPrey;
+    private $matchesPrey = 0;
     
     /**
      * @ORM\Column(type="integer")
      */
-    protected $matchesHunter;
-
+    private $matchesHunter = 0;
+	
+	public function __construct()
+    {
+        $this->salt = md5(uniqid(null, true));
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+	
+    /**
+     * @inheritDoc
+     */
+    public function eraseCredentials()
+    {
+    }
+    
     /**
      * Get id
      *
@@ -102,51 +137,74 @@ class User implements UserInterface {
     }
 
     /**
-     * Set login
+     * Set username
      *
-     * @param string $login
+     * @param string $username
      * @return User
      */
-    public function setLogin($login)
+    public function setUsername($login)
     {
-        $this->login = $login;
+        $this->username = $login;
     
         return $this;
     }
 
     /**
-     * Get login
+     * Get username
      *
      * @return string 
      */
-    public function getLogin()
+    public function getUsername()
     {
-        return $this->login;
+        return $this->username;
     }
 
     /**
-     * Set pass
+     * Set password
      *
-     * @param string $pass
+     * @param string $password
      * @return User
      */
-    public function setPass($pass)
+    public function setPassword($password)
     {
-        $this->pass = $pass;
+        $this->password = $password;
     
         return $this;
     }
 
     /**
-     * Get pass
+     * Get password
      *
      * @return string 
      */
-    public function getPass()
+    public function getPassword()
     {
-        return $this->pass;
+        return $this->password;
     }
 
+    /**
+     * Set salt
+     *
+     * @param string $username
+     * @return User
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+    
+        return $this;
+    }
+
+    /**
+     * Get salt
+     *
+     * @return string 
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+    
     /**
      * Set email
      *
@@ -283,5 +341,28 @@ class User implements UserInterface {
     public function getMatchesHunter()
     {
         return $this->matchesHunter;
+    }
+
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     * @return User
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+    
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean 
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
     }
 }
