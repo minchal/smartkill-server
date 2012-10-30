@@ -1,0 +1,62 @@
+{% extends 'SmartkillWebBundle::layout.html.twig' %}
+
+{% block title %}SmartKill - Strona główna{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="span6">
+		<div class="block">
+			<h2>SmartKill</h2>
+			
+			<p>Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, 
+			non felis. Maecenas malesuada elit lectus felis, malesuada ultricies. Curabitur et 
+			ligula. Ut molestie a, ultricies porta urna. Vestibulum commodo volutpat a, convallis 
+			ac, laoreet enim. Phasellus fermentum in, dolor. Pellentesque facilisis. 
+			Nulla imperdiet sit amet magna. Vestibulum dapibus, mauris nec malesuada 
+			fames ac turpis velit, rhoncus eu, luctus et interdum adipiscing wisi.</p>
+			
+			<p>Aliquam erat ac ipsum. Integer aliquam purus. Quisque lorem tortor fringilla 
+			sed, vestibulum id, eleifend justo vel bibendum sapien massa ac turpis 
+			faucibus orci luctus non, consectetuer lobortis quis, varius in, purus. 
+			Integer ultrices posuere cubilia Curae, Nulla ipsum dolor lacus, suscipit 
+			adipiscing. Cum sociis natoque penatibus et ultrices volutpat.</p>
+		</div>
+	</div>
+	<div class="span6">
+		<div class="block">
+			<h2>Zarejestruj się</h2>
+			
+			<form action="{{ path('register') }}" method="post" class="form-horizontal" style="width: 400px;">
+				<div class="control-group">
+					<label class="control-label" for="r_login">Login:</label>
+					<div class="controls">
+						<input type="text" id="r_login" name="login" />
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="r_email">E-mail:</label>
+					<div class="controls">
+						<input type="text" id="r_email" name="email" />
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="r_pass">Hasło:</label>
+					<div class="controls">
+						<input type="password" id="r_pass" name="pass" />
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="r_pass2">Powtórz hasło:</label>
+					<div class="controls">
+						<input type="password" id="r_pass2" name="pass2" />
+					</div>
+				</div>
+				
+				<button class="btn btn-primary btn-large pull-right" type="submit">Zarejestruj mnie!</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

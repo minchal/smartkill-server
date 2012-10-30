@@ -1,0 +1,16 @@
+index:
+    pattern:  /
+    defaults: { _controller: SmartkillWebBundle:Default:index }
+
+contact:
+    pattern:  /contact
+    defaults: { _controller: SmartkillWebBundle:Default:contact }
+    
+register:
+    pattern:  /register
+    defaults: { _controller: SmartkillWebBundle:User:register }
+
+login:
+    pattern:  /login
+    defaults: { _controller: SmartkillWebBundle:User:login }
+

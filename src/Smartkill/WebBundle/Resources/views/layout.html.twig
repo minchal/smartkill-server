@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<meta charset="UTF-8" />
+	<title>{% block title %}SmartKill{% endblock %}</title>
+	<link rel="stylesheet" href="{{ asset('style/style.css') }}" />
+	<link rel="icon" href="{{ asset('favicon.ico') }}" />
+</head>
+<body>
+	<section class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<div class="nav-collapse collapse">
+					<form action="{{ path('login') }}" method="post" class="navbar-form pull-right">
+						<input type="text" name="login" class="span2" placeholder="Login">
+						<input type="password" name="pass" class="span2" placeholder="Hasło">
+						<button type="submit" class="btn">Zaloguj</button>
+					</form>
+					
+					<ul class="nav">
+						<li class="active"><a href="{{ path('index') }}">Home</a></li>
+						<li><a href="{{ path('index') }}">Mecze</a></li>
+						<li><a href="{{ path('index') }}">Ranking</a></li>
+						<li><a href="{{ path('contact') }}">Kontakt</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+    
+	<section id="container" class="container">
+		<div id="top">
+			<a href="#"><img src="{{ asset('style/logo.png') }} " alt="" /></a>
+			
+			<h1>
+				<a href="#">SmartKill</a><br />
+				<small>Miejskie polowanie telefonem</small>
+			</h1>
+		</div>
+		
+		{% for flashMessage in app.session.flashbag.get('notice') %}
+			<div class="flash-message">
+				<em>Notice</em>: {{ flashMessage }}
+			</div>
+		{% endfor %}
+		
+		{% block content %}
+		
+		{% endblock %}
+		
+		<footer id="footer">
+			&copy; SmartKill 2012
+		</footer>
+	</section>
+</body>
+</html>
