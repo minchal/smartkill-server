@@ -17,7 +17,6 @@ class Session {
 	/**
 	 * @ORM\Id
 	 * @ORM\Column(type="string", unique=true, length=40)
-	 * @ORM\GeneratedValue(strategy="AUTO")
 	 */
     private $id;
     
@@ -31,6 +30,12 @@ class Session {
      * @ORM\Column(name="created_at", type="datetime")
      */
     private $createdAt;
+    
+	public function __construct()
+    {
+        $this->id = md5(uniqid(null, true));
+        $this->createdAt = new \DateTime();
+    }
     
     /**
     * Get id

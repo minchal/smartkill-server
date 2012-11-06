@@ -377,10 +377,10 @@ class User implements UserInterface {
     /**
      * Add sessions
      *
-     * @param Smartkill\WebBundle\Entity\Session $sessions
+     * @param Smartkill\APIBundle\Entity\Session $sessions
      * @return User
      */
-    public function addSession(\Smartkill\WebBundle\Entity\Session $sessions)
+    public function addSession(\Smartkill\APIBundle\Entity\Session $sessions)
     {
         $this->sessions[] = $sessions;
     
@@ -390,9 +390,9 @@ class User implements UserInterface {
     /**
      * Remove sessions
      *
-     * @param Smartkill\WebBundle\Entity\Session $sessions
+     * @param Smartkill\APIBundle\Entity\Session $sessions
      */
-    public function removeSession(\Smartkill\WebBundle\Entity\Session $sessions)
+    public function removeSession(\Smartkill\APIBundle\Entity\Session $sessions)
     {
         $this->sessions->removeElement($sessions);
     }

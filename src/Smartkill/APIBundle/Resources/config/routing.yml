@@ -1,3 +1,7 @@
-smartkill_api_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: SmartkillAPIBundle:Default:index }
+api_login:
+    pattern:  /login
+    defaults: { _controller: SmartkillAPIBundle:User:login }
+    
+api_logout:
+    pattern:  /logout
+    defaults: { _controller: SmartkillAPIBundle:User:logout }
