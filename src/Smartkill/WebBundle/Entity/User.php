@@ -2,10 +2,12 @@
 
 namespace Smartkill\WebBundle\Entity;
 
+use Smartkill\APIBundle\Entity\Session;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
@@ -64,7 +66,7 @@ class User implements UserInterface {
     private $avatar;
     
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="registered_at", type="datetime")
      */
     private $registeredAt;
     
@@ -74,18 +76,24 @@ class User implements UserInterface {
     private $points = 0;
     
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="matches_prey", type="integer")
      */
     private $matchesPrey = 0;
     
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="matches_hunter", type="integer")
      */
     private $matchesHunter = 0;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Smartkill\APIBundle\Entity\Session", mappedBy="user")
+     */
+    protected $sessions;
 	
 	public function __construct()
     {
         $this->salt = md5(uniqid(null, true));
+        $this->sessions = new ArrayCollection();
     }
     
     /**
@@ -364,5 +372,38 @@ class User implements UserInterface {
     public function getIsActive()
     {
         return $this->isActive;
+    }
+
+    /**
+     * Add sessions
+     *
+     * @param Smartkill\WebBundle\Entity\Session $sessions
+     * @return User
+     */
+    public function addSession(\Smartkill\WebBundle\Entity\Session $sessions)
+    {
+        $this->sessions[] = $sessions;
+    
+        return $this;
+    }
+
+    /**
+     * Remove sessions
+     *
+     * @param Smartkill\WebBundle\Entity\Session $sessions
+     */
+    public function removeSession(\Smartkill\WebBundle\Entity\Session $sessions)
+    {
+        $this->sessions->removeElement($sessions);
+    }
+
+    /**
+     * Get sessions
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getSessions()
+    {
+        return $this->sessions;
     }
 }

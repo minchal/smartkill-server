@@ -2,14 +2,19 @@
 
 namespace Smartkill\WebBundle\Entity;
 
+use Smartkill\APIBundle\Entity\Session;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="Smartkill\WebBundle\Entity\UserRepository")
+ * @UniqueEntity("username")
+ * @UniqueEntity("email")
  */
 class User implements UserInterface {
 	
@@ -32,57 +37,63 @@ class User implements UserInterface {
     private $salt;
     
     /**
-     * @ORM\Column(type="string", length=40)
+     * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank()
+     * @Assert\MinLength(limit=5)
      */
     private $password;
     
     /**
      * @ORM\Column(type="string", unique=true, length=100)
      * @Assert\NotBlank()
-     * @Assert\Email(message = "Podany adres e-mail jest nieprawidłowy.")
+     * @Assert\Email()
      */
     private $email;
     
     /**
      * @ORM\Column(name="is_active", type="boolean")
      */
-    private $isActive;
+    private $isActive = true;
     
     /**
      * @ORM\Column(type="boolean")
      */
-    private $admin;
+    private $admin = false;
     
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $avatar;
     
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="registered_at", type="datetime")
      */
     private $registeredAt;
     
     /**
      * @ORM\Column(type="integer")
      */
-    private $points;
+    private $points = 0;
     
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="matches_prey", type="integer")
      */
-    private $matchesPrey;
+    private $matchesPrey = 0;
     
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="matches_hunter", type="integer")
      */
-    private $matchesHunter;
+    private $matchesHunter = 0;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Session", mappedBy="user")
+     */
+    protected $sessions;
 	
 	public function __construct()
     {
-        $this->isActive = true;
         $this->salt = md5(uniqid(null, true));
+        $this->sessions = new ArrayCollection();
     }
     
     /**
@@ -338,5 +349,28 @@ class User implements UserInterface {
     public function getMatchesHunter()
     {
         return $this->matchesHunter;
+    }
+
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     * @return User
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+    
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean 
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
     }
 }
