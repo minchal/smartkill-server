@@ -1,0 +1,25 @@
+{% extends 'SmartkillWebBundle::layout.html.twig' %}
+
+{% block title %}SmartKill - Mecze{% endblock %}
+
+{% block content %}
+
+	<div class="block">
+		<h2>Mecze</h2>
+		
+		<table>
+			<th>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</th>
+			{% for match in matches %}
+	        	<li>{{ match.name }}</li>
+	    	{% endfor %}
+    	</ul>
+    	
+    	<a href="{{ path('match_create') }}">Utwórz mecz</a>
+	</div>
+
+{% endblock %}

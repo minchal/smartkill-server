@@ -10,6 +10,14 @@ register:
     pattern:  /register
     defaults: { _controller: SmartkillWebBundle:User:register }
 
+matches:
+    pattern:  /matches
+    defaults: { _controller: SmartkillWebBundle:Match:listing }
+    
+match_create:
+    pattern:  /match/create
+    defaults: { _controller: SmartkillWebBundle:Match:create }
+
 login:
     pattern:  /login
     defaults: { _controller: SmartkillWebBundle:User:login }
