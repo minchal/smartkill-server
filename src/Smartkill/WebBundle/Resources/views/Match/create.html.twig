@@ -9,8 +9,16 @@
 		<h2>Utwórz mecz</h2>
 		
 		<form action="{{ path('match_create')}}" method="post" {{ form_enctype(form) }} class="form-horizontal form-tight">
-			{{ form_widget(form) }}
+			{{ form_errors(form) }}
+
+		    {{ form_row(form.name) }}
+		    {{ form_row(form.dueDate, { 'attr': {'class': 'horizontal-datetime'} }) }}
+		    {{ form_row(form.length) }}
+			<button class="btn btn-primary btn-small pull-right" type="submit">Lokalizacja</button>
 			
+		    {{ form_rest(form) }}
+			
+			<button class="btn btn-primary btn-large pull-left" type="submit">Lokalizacja</button>
 			<button class="btn btn-primary btn-large pull-right" type="submit">Zapisz</button>
 		</form>
 	</div>

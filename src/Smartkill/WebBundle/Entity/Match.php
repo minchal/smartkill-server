@@ -26,7 +26,7 @@ class Match {
     private $name;
     
     /**
-     * @ORM\Column(type="string", length=128)
+     * @ORM\Column(type="string", length=128, nullable=true)
      * @Assert\NotBlank()
      * @Assert\MinLength(limit=5)
      */
@@ -50,7 +50,7 @@ class Match {
     private $lng;
     
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @ORM\Column(type="integer")
      * @Assert\NotBlank()
      */
     private $size;
@@ -67,7 +67,7 @@ class Match {
     private $dueDate;
     
     /**
-     * @ORM\Column(type="integer", name="max_players", nullable=true)
+     * @ORM\Column(type="integer", name="max_players")
      */
     private $maxPlayers = 2;
     

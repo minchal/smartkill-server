@@ -7,17 +7,22 @@
 	<div class="block">
 		<h2>Mecze</h2>
 		
-		<table>
-			<th>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</th>
+		<table id="grid">
+			<tr>
+				<th>Nazwa</th>
+				<th>Data</th>
+				<th>Rozmiar</th>
+				<th>Graczy</th>
+			</tr>
 			{% for match in matches %}
-	        	<li>{{ match.name }}</li>
+				<tr>
+					<td>{{ match.getName() }}</td>
+					<td>{{ match.getDueDate().format('d.m.Y') }}</td>
+					<td>{{ match.getSize() }}</td>
+					<td>{{ match.getMaxPlayers() }}</td>
+	        	</tr>
 	    	{% endfor %}
-    	</ul>
+    	</table>
     	
     	<a href="{{ path('match_create') }}">Utwórz mecz</a>
 	</div>

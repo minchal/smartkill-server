@@ -5,3 +5,7 @@ api_login:
 api_logout:
     pattern:  /logout
     defaults: { _controller: SmartkillAPIBundle:User:logout }
+
+api_matches:
+    pattern:  /matches
+    defaults: { _controller: SmartkillAPIBundle:Match:listing }
