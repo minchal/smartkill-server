@@ -1,0 +1,57 @@
+{% extends 'SmartkillWebBundle::layout.html.twig' %}
+
+{% block title %}SmartKill - Mecze{% endblock %}
+
+{% block content %}
+
+	<div class="block">
+		<h2>Mecze</h2>
+		
+		<table class="records_list">
+		    <thead>
+		        <tr>
+		            <th>Nazwa</th>
+		            <th>Szerokość geo.</th>
+		            <th>Długość geo.</th>
+		            <th>Promień terytorium</th>
+		            <th>Długość rozgrywki</th>
+		            <th>Termin gry</th>
+		            <th>Maks. liczba graczy</th>
+		            <th>Akcje</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		    {% for entity in entities %}
+		        <tr>
+		            <td>{{ entity.name }}</td>
+		            <td>{{ entity.lat }}</td>
+		            <td>{{ entity.lng }}</td>
+		            <td>{{ entity.size }}</td>
+		            <td>{{ entity.length }}</td>
+		            <td>{% if entity.dueDate %}{{ entity.dueDate|date('Y-m-d H:i') }}{% endif %}</td>
+		            <td>{{ entity.maxPlayers }}</td>
+		            <td>
+		                <ul>
+		                    <li>
+		                        <a href="{{ path('match_show', { 'id': entity.id }) }}">Zobacz</a>
+		                    </li>
+		                    <li>
+		                        <a href="{{ path('match_edit', { 'id': entity.id }) }}">Edytuj</a>
+		                    </li>
+		                </ul>
+		            </td>
+		        </tr>
+		    {% endfor %}
+		    </tbody>
+		</table>
+		
+		<ul>
+		    <li>
+		        <a href="{{ path('match_new') }}">
+		            Stwórz nowy mecz
+		        </a>
+		    </li>
+		</ul>
+	</div>
+
+{% endblock %}

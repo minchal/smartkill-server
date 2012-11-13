@@ -1,0 +1,71 @@
+{% extends 'SmartkillWebBundle::layout.html.twig' %}
+
+{% block title %}SmartKill - Mecze{% endblock %}
+
+{% block content %}
+
+	<div class="block">
+		<h2>Mecz: {{ entity.name }} </h2>
+
+		<table class="record_properties">
+		    <tbody>
+		        <tr>
+		            <th>Id</th>
+		            <td>{{ entity.id }}</td>
+		        </tr>
+		        <tr>
+		            <th>Nazwa</th>
+		            <td>{{ entity.name }}</td>
+		        </tr>
+		        <tr>
+		            <th>Szerokość geo.</th>
+		            <td>{{ entity.lat }}</td>
+		        </tr>
+		        <tr>
+		            <th>Długość geo.</th>
+		            <td>{{ entity.lng }}</td>
+		        </tr>
+		        <tr>
+		            <th>Promień terytorium</th>
+		            <td>{{ entity.size }}</td>
+		        </tr>
+		        <tr>
+		            <th>Długość rozgrywki</th>
+		            <td>{{ entity.length }}</td>
+		        </tr>
+		        <tr>
+		            <th>Termin gry</th>
+		            <td>{{ entity.dueDate|date('Y-m-d H:i') }}</td>
+		        </tr>
+		        <tr>
+		            <th>Maks. liczba graczy</th>
+		            <td>{{ entity.maxPlayers }}</td>
+		        </tr>
+		        <tr>
+		            <th>Data utworzenia</th>
+		            <td>{{ entity.createdAt|date('Y-m-d H:i:s') }}</td>
+		        </tr>
+		    </tbody>
+		</table>
+		
+		<ul class="record_actions">
+		    <li>
+		        <a href="{{ path('match') }}">
+		            Powrót do listy
+		        </a>
+		    </li>
+		    <li>
+		        <a href="{{ path('match_edit', { 'id': entity.id }) }}">
+		            Edytuj
+		        </a>
+		    </li>
+		    <li>
+		        <form action="{{ path('match_delete', { 'id': entity.id }) }}" method="post">
+		            {{ form_widget(delete_form) }}
+		            <button class="btn btn-primary btn-large pull-right" type="submit">Usuń</button>
+		        </form>
+		    </li>
+		</ul>
+	</div>
+
+{% endblock %}
