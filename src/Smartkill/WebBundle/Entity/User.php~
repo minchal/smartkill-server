@@ -86,9 +86,14 @@ class User implements UserInterface {
     private $matchesHunter = 0;
     
     /**
-     * @ORM\OneToMany(targetEntity="Session", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Smartkill\APIBundle\Entity\Session", mappedBy="user")
      */
     protected $sessions;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\Match", mappedBy="createdBy")
+     */
+    protected $matches;
 	
 	public function __construct()
     {
@@ -372,5 +377,38 @@ class User implements UserInterface {
     public function getIsActive()
     {
         return $this->isActive;
+    }
+
+    /**
+     * Add sessions
+     *
+     * @param Smartkill\APIBundle\Entity\Session $sessions
+     * @return User
+     */
+    public function addSession(\Smartkill\APIBundle\Entity\Session $sessions)
+    {
+        $this->sessions[] = $sessions;
+    
+        return $this;
+    }
+
+    /**
+     * Remove sessions
+     *
+     * @param Smartkill\APIBundle\Entity\Session $sessions
+     */
+    public function removeSession(\Smartkill\APIBundle\Entity\Session $sessions)
+    {
+        $this->sessions->removeElement($sessions);
+    }
+
+    /**
+     * Get sessions
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getSessions()
+    {
+        return $this->sessions;
     }
 }

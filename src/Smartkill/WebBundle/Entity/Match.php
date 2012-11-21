@@ -4,6 +4,7 @@ namespace Smartkill\WebBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use JMS\SerializerBundle\Annotation\Accessor;
 
 /**
  * @ORM\Entity
@@ -27,15 +28,9 @@ class Match {
     
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
-     * @Assert\NotBlank()
      * @Assert\MinLength(limit=5)
      */
     private $password;
-    
-    /**
-     * @ORM\Column(type="string", length=32)
-     */
-    private $salt;
     
     /**
      * @ORM\Column(type="decimal", scale=2)
@@ -75,9 +70,15 @@ class Match {
      * @ORM\Column(type="datetime", name="created_at")
      */
     private $createdAt;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Smartkill\WebBundle\Entity\User", inversedBy="matches")
+     * @ORM\JoinColumn(name="created_by", referencedColumnName="id")
+     * @Accessor(getter="getCreatedById")
+     */
+    private $createdBy;
 	
 	public function __construct() {
-        $this->salt = md5(uniqid(null, true));
         $this->dueDate = new \DateTime();
     }
     
@@ -136,29 +137,6 @@ class Match {
     public function getPassword()
     {
         return $this->password;
-    }
-
-    /**
-     * Set salt
-     *
-     * @param string $salt
-     * @return Match
-     */
-    public function setSalt($salt)
-    {
-        $this->salt = $salt;
-    
-        return $this;
-    }
-
-    /**
-     * Get salt
-     *
-     * @return string 
-     */
-    public function getSalt()
-    {
-        return $this->salt;
     }
 
     /**
@@ -320,5 +298,33 @@ class Match {
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * Set createdBy
+     *
+     * @param \Smartkill\WebBundle\Entity\User $createdBy
+     * @return Match
+     */
+    public function setCreatedBy(\Smartkill\WebBundle\Entity\User $createdBy = null)
+    {
+        $this->createdBy = $createdBy;
+    
+        return $this;
+    }
+
+    /**
+     * Get createdBy
+     *
+     * @return \Smartkill\WebBundle\Entity\User 
+     */
+    public function getCreatedBy()
+    {
+        return $this->createdBy;
+    }
+    
+    public function getCreatedById()
+    {
+    	return $this->getCreatedBy()->getId();
     }
 }

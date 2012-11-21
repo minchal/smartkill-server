@@ -89,6 +89,11 @@ class User implements UserInterface {
      * @ORM\OneToMany(targetEntity="Smartkill\APIBundle\Entity\Session", mappedBy="user")
      */
     protected $sessions;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\Match", mappedBy="createdBy")
+     */
+    protected $matches;
 	
 	public function __construct()
     {
@@ -405,5 +410,38 @@ class User implements UserInterface {
     public function getSessions()
     {
         return $this->sessions;
+    }
+
+    /**
+     * Add matches
+     *
+     * @param \Smartkill\WebBundle\Entity\Match $matches
+     * @return User
+     */
+    public function addMatche(\Smartkill\WebBundle\Entity\Match $matches)
+    {
+        $this->matches[] = $matches;
+    
+        return $this;
+    }
+
+    /**
+     * Remove matches
+     *
+     * @param \Smartkill\WebBundle\Entity\Match $matches
+     */
+    public function removeMatche(\Smartkill\WebBundle\Entity\Match $matches)
+    {
+        $this->matches->removeElement($matches);
+    }
+
+    /**
+     * Get matches
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMatches()
+    {
+        return $this->matches;
     }
 }

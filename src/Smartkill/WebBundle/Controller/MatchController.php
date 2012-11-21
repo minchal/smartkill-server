@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Smartkill\WebBundle\Entity\Match;
 use Smartkill\WebBundle\Form\MatchType;
+use Smartkill\WebBundle\Widget\sfWidgetFormGMapAddress;
 
 /**
  * Match controller.
@@ -50,6 +51,13 @@ class MatchController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 
+//         $widget = new sfWidgetFormGMapAddress();
+//         echo $widget->render('user[location][address]', array(
+//         	'address' => '151 Rue montmartre, 75002 Paris',
+//         	'longitude' => '2.294359',
+//           	'latitude' => '48.858205'
+//         ));
+        
         return array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),

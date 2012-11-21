@@ -89,17 +89,4 @@ class Session {
     {
     	return $this->createdAt;
     }
-
-    /**
-     * Set id
-     *
-     * @param string $id
-     * @return Session
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    
-        return $this;
-    }
 }

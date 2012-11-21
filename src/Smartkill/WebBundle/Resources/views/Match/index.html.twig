@@ -17,7 +17,7 @@
 		            <th>Długość rozgrywki</th>
 		            <th>Termin gry</th>
 		            <th>Maks. liczba graczy</th>
-		            <th>Akcje</th>
+		            <th colspan="2">Akcje</th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -30,28 +30,14 @@
 		            <td>{{ entity.length }}</td>
 		            <td>{% if entity.dueDate %}{{ entity.dueDate|date('Y-m-d H:i') }}{% endif %}</td>
 		            <td>{{ entity.maxPlayers }}</td>
-		            <td>
-		                <ul>
-		                    <li>
-		                        <a href="{{ path('match_show', { 'id': entity.id }) }}">Zobacz</a>
-		                    </li>
-		                    <li>
-		                        <a href="{{ path('match_edit', { 'id': entity.id }) }}">Edytuj</a>
-		                    </li>
-		                </ul>
-		            </td>
+		            <td><a href="{{ path('match_show', { 'id': entity.id }) }}">Zobacz</a></td>
+					<td><a href="{{ path('match_edit', { 'id': entity.id }) }}">Edytuj</a></td>
 		        </tr>
 		    {% endfor %}
 		    </tbody>
 		</table>
 		
-		<ul>
-		    <li>
-		        <a href="{{ path('match_new') }}">
-		            Stwórz nowy mecz
-		        </a>
-		    </li>
-		</ul>
+		<a href="{{ path('match_new') }}" class="btn btn-primary btn-large pull-right">Stwórz nowy mecz</a>
 	</div>
 
 {% endblock %}
