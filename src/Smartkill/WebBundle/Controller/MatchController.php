@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Ivory\GoogleMapBundle\Model\MapTypeId;
 use Smartkill\WebBundle\Entity\Match;
 use Smartkill\WebBundle\Form\MatchType;
 use Smartkill\WebBundle\Widget\sfWidgetFormGMapAddress;
@@ -67,10 +68,37 @@ class MatchController extends Controller
     {
         $entity = new Match();
         $form   = $this->createForm(new MatchType(), $entity);
+        $map	= $this->get('ivory_google_map.map');
+        
+        $map->setPrefixJavascriptVariable('map_');
+        $map->setHtmlContainerId('map_canvas');
+        
+        $map->setAsync(false);
+        
+        $map->setAutoZoom(false);
+        
+        $map->setCenter(51.11, 17.06, true);
+        $map->setMapOption('zoom', 10);
+        
+        $map->setBound(-2.1, -3.9, 2.6, 1.4, true, true);
+        
+        $map->setMapOption('mapTypeId', MapTypeId::ROADMAP);
+        $map->setMapOption('mapTypeId', 'roadmap');
+        
+//         $map->setMapOption('disableDefaultUI', true);
+//         $map->setMapOption('disableDoubleClickZoom', true);
+        
+        $map->setStylesheetOptions(array(
+            'width'	 => '500px',
+            'height' => '500px'
+        ));
+        
+        $map->setLanguage('pl');
 
         return array(
             'entity' => $entity,
             'form'   => $form->createView(),
+            'map'	 => $map,
         );
     }
 
