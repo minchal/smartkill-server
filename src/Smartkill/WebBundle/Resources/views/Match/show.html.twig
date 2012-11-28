@@ -60,6 +60,14 @@
 		        </a>
 		    </li>
 		    <li>
+		    	{% if joined == false %}
+			    	<form action="{{ path('match_join', { 'id': entity.id }) }}" method="post">
+			            <input type="password" name="pass" />
+			            <button type="submit">Dołącz</button>
+			        </form>
+				{% endif %}
+		    </li>
+		    <li>
 		        <form action="{{ path('match_delete', { 'id': entity.id }) }}" method="post">
 		            {{ form_widget(delete_form) }}
 		            <button class="btn btn-primary btn-large pull-right" type="submit">Usuń</button>

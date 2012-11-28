@@ -37,6 +37,10 @@ match_update:
 match_delete:
     pattern:  /match/{id}/delete
     defaults: { _controller: SmartkillWebBundle:Match:delete }
+    
+match_join:
+    pattern:  /match/{id}/join
+    defaults: { _controller: SmartkillWebBundle:Match:join }
         
 login:
     pattern:  /login

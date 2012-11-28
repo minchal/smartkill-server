@@ -411,4 +411,37 @@ class User implements UserInterface {
     {
         return $this->sessions;
     }
+
+    /**
+     * Add matches
+     *
+     * @param \Smartkill\WebBundle\Entity\Match $matches
+     * @return User
+     */
+    public function addMatche(\Smartkill\WebBundle\Entity\Match $matches)
+    {
+        $this->matches[] = $matches;
+    
+        return $this;
+    }
+
+    /**
+     * Remove matches
+     *
+     * @param \Smartkill\WebBundle\Entity\Match $matches
+     */
+    public function removeMatche(\Smartkill\WebBundle\Entity\Match $matches)
+    {
+        $this->matches->removeElement($matches);
+    }
+
+    /**
+     * Get matches
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMatches()
+    {
+        return $this->matches;
+    }
 }

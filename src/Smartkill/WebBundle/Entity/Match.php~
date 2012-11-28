@@ -4,7 +4,7 @@ namespace Smartkill\WebBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use JMS\SerializerBundle\Annotation\Exclude;
+use JMS\SerializerBundle\Annotation\Accessor;
 
 /**
  * @ORM\Entity
@@ -74,7 +74,7 @@ class Match {
     /**
      * @ORM\ManyToOne(targetEntity="Smartkill\WebBundle\Entity\User", inversedBy="matches")
      * @ORM\JoinColumn(name="created_by", referencedColumnName="id")
-     * @Exclude
+     * @Accessor(getter="getCreatedById")
      */
     private $createdBy;
 	
@@ -298,5 +298,33 @@ class Match {
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * Set createdBy
+     *
+     * @param \Smartkill\WebBundle\Entity\User $createdBy
+     * @return Match
+     */
+    public function setCreatedBy(\Smartkill\WebBundle\Entity\User $createdBy = null)
+    {
+        $this->createdBy = $createdBy;
+    
+        return $this;
+    }
+
+    /**
+     * Get createdBy
+     *
+     * @return \Smartkill\WebBundle\Entity\User 
+     */
+    public function getCreatedBy()
+    {
+        return $this->createdBy;
+    }
+    
+    public function getCreatedById()
+    {
+    	return $this->getCreatedBy()->getId();
     }
 }

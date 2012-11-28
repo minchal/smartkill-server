@@ -9,8 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Ivory\GoogleMapBundle\Model\MapTypeId;
 use Smartkill\WebBundle\Entity\Match;
+use Smartkill\WebBundle\Entity\MatchUser;
 use Smartkill\WebBundle\Form\MatchType;
-use Smartkill\WebBundle\Widget\sfWidgetFormGMapAddress;
 
 /**
  * Match controller.
@@ -45,7 +45,8 @@ class MatchController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('SmartkillWebBundle:Match')->find($id);
-
+		$user	= $this->getUser();
+		
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Match entity.');
         }
@@ -54,6 +55,8 @@ class MatchController extends Controller
         
         return array(
             'entity'      => $entity,
+            'user'        => $user,
+            'joined'	  => $em->getRepository('SmartkillWebBundle:MatchUser')->find(array('user'=>$user->getId(), 'match'=>$entity->getId())),
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -70,18 +73,25 @@ class MatchController extends Controller
         $form   = $this->createForm(new MatchType(), $entity);
         $map	= $this->get('ivory_google_map.map');
         
+//         $geocoder = $this->get('ivory_google_map.geocoder');
+//         $lat = $geocoder->getLatitude();
+//         $lng = $geocoder->getLongtitude();
+        
+        $circle	= $this->get('ivory_google_map.circle');
+        $circle->setPrefixJavascriptVariable('circle_');
+        $circle->setCenter(51.11, 17.06, true);
+        $circle->setRadius(1000);
+        $circle->setOption('clickable', true);
+        $circle->setOption('strokeWeight', 2);
+        $map->addCircle($circle);
+        
         $map->setPrefixJavascriptVariable('map_');
         $map->setHtmlContainerId('map_canvas');
-        
         $map->setAsync(false);
-        
         $map->setAutoZoom(false);
-        
         $map->setCenter(51.11, 17.06, true);
         $map->setMapOption('zoom', 10);
-        
         $map->setBound(-2.1, -3.9, 2.6, 1.4, true, true);
-        
         $map->setMapOption('mapTypeId', MapTypeId::ROADMAP);
         $map->setMapOption('mapTypeId', 'roadmap');
         
@@ -111,15 +121,18 @@ class MatchController extends Controller
      */
     public function createAction(Request $request)
     {
-        $entity  = new Match();
+    	$user 	= $this->getUser();
+        $entity = new Match();
         $form = $this->createForm(new MatchType(), $entity);
         $form->bind($request);
 
         if ($form->isValid()) {
 			$entity -> setCreatedAt(new \DateTime());
+			$entity -> setCreatedBy($user);
 			
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
+            $em->persist($user);
             $em->flush();
 
             return $this->redirect($this->generateUrl('match_show', array('id' => $entity->getId())));
@@ -224,5 +237,42 @@ class MatchController extends Controller
             ->add('id', 'hidden')
             ->getForm()
         ;
+    }
+    
+    /**
+    *
+    * @Route("/{id}/join", name="match_join")
+    * @Method("POST")
+    */
+    public function joinAction(Request $request, $id)
+    {
+    	$em 	= $this->getDoctrine()->getManager();
+    	$user	= $this->getUser();
+        $match	= $em->getRepository('SmartkillWebBundle:Match')->find($id);
+
+        if (!$match) {
+            throw $this->createNotFoundException('Unable to find Match entity.');
+        }
+        if ($match->getPassword()) {
+        	var_dump($_POST);
+        	if ($match->getPassword() != $request->get('pass')) {
+        		throw $this->createNotFoundException('Password is invalid.');
+        	}
+        }
+        
+        $entity = new MatchUser();
+
+		$entity -> setUser($user->getId());
+		$entity -> setMatch($match->getId());
+		$entity -> setType($entity::TYPE_PREY);
+		$entity -> setLat($match->getLat());
+		$entity -> setLng($match->getLng());
+		$entity -> setUpdatedAt(new \DateTime());
+			
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($entity);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('match_show', array('id' => $match->getId())));
     }
 }
