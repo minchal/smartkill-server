@@ -9,3 +9,7 @@ api_logout:
 api_matches:
     pattern:  /matches
     defaults: { _controller: SmartkillAPIBundle:Match:listing }
+
+api_position:
+    pattern:  /position
+    defaults: { _controller: SmartkillAPIBundle:MatchUser:position }
