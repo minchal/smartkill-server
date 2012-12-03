@@ -325,6 +325,6 @@ class Match {
     
     public function getCreatedById()
     {
-    	return $this->getCreatedBy()->getId();
+    	return $this->getCreatedBy() ? $this->getCreatedBy()->getId() : null;
     }
 }
