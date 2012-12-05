@@ -1,0 +1,53 @@
+{% extends 'SmartkillWebBundle::layout.html.twig' %}
+
+{% block title %}SmartKill - Ranking{% endblock %}
+
+{% block content %}
+
+	<div class="block">
+		<h2>Ranking</h2>
+		
+		<table class="records_list">
+		    <thead>
+		        <tr>
+		            <th>Gracz</th>
+		            <th>Punkty</th>
+		            <th>Rozegranych meczy</th>
+		            <th>Łowca</th>
+		            <th>Ofiara</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		    {% for entity in entities %}
+		        <tr>
+		            <td>{{ entity.username }}</td>
+		            <td>{{ entity.pointsPrey + entity.pointsHunter }}</td>
+		            <td>{{ entity.matchesPrey + entity.matchesHunter }}</td>
+		            <td>{{ entity.pointsPrey }}</td>
+		            <td>{{ entity.pointsHunter }}</td>
+		        </tr>
+		    {% endfor %}
+		    </tbody>
+		</table>
+		
+		{% if last_page > 1 %}
+			<!-- PAGINATION -->
+			<div class="pagination_sector">
+				<a href="{{ path('ranking', { 'page': 1 }) }}"> << </a>
+				<a href="{{ path('ranking', { 'page': previous_page }) }}"> < </a>
+				<ol>
+					{% for page in 1..last_page %}
+						{% if page == current_page %}
+							<li>{{ page }}</li>
+						{% else %}
+							<li> <a href="{{ path('ranking', { 'page': page }) }}">{{ page }}</a> </li>
+						{% endif %}
+					{% endfor %}
+				</ol>
+				<a href="{{ path('ranking', { 'page': next_page }) }}"> > </a>
+				<a href="{{ path('ranking', { 'page': last_page }) }}"> >> </a>
+			</div>
+		{% endif %}
+	</div>
+
+{% endblock %}

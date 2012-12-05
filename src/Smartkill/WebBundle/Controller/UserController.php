@@ -62,4 +62,31 @@ class UserController extends Controller {
 		
         return $this->render('SmartkillWebBundle:User:register.html.twig', array('form' => $form->createView()));
 	}
+	
+	public function rankingAction($page) {
+		$repository = $this->getDoctrine()->getRepository('SmartkillWebBundle:User');
+		
+		// pagination
+		$total = $repository->createQueryBuilder('u')->getQuery()->getResult();
+		$total_entities    = count($total);
+		$entities_per_page = $this->container->getParameter('max_on_listing');
+		$last_page         = ceil($total_entities / $entities_per_page);
+		$previous_page     = $page > 1 ? $page - 1 : 1;
+		$next_page         = $page < $last_page ? $page + 1 : $last_page;
+		
+		$entities = $repository->createQueryBuilder('u')
+			->setFirstResult(($page * $entities_per_page) - $entities_per_page)
+			->setMaxResults($this->container->getParameter('max_on_listing'))
+			->orderBy('u.pointsHunter + u.pointsPrey', 'DESC')
+			->getQuery()
+			->getResult();
+		
+		return $this->render('SmartkillWebBundle:User:ranking.html.twig', array(
+		            'entities'		=> $entities,
+		            'previous_page'	=> $previous_page,
+		            'current_page'	=> $page,
+		            'next_page'		=> $next_page,
+		            'last_page'		=> $last_page,
+		));
+	}
 }

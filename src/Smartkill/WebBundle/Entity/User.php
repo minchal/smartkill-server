@@ -71,9 +71,14 @@ class User implements UserInterface {
     private $registeredAt;
     
     /**
-     * @ORM\Column(type="integer")
+    * @ORM\Column(name="points_prey", type="integer")
+    */
+    private $pointsPrey = 0;
+    
+    /**
+     * @ORM\Column(name="points_hunter", type="integer")
      */
-    private $points = 0;
+    private $pointsHunter = 0;
     
     /**
      * @ORM\Column(name="matches_prey", type="integer")
@@ -443,5 +448,51 @@ class User implements UserInterface {
     public function getMatches()
     {
         return $this->matches;
+    }
+
+    /**
+     * Set pointsPrey
+     *
+     * @param integer $pointsPrey
+     * @return User
+     */
+    public function setPointsPrey($pointsPrey)
+    {
+        $this->pointsPrey = $pointsPrey;
+    
+        return $this;
+    }
+
+    /**
+     * Get pointsPrey
+     *
+     * @return integer 
+     */
+    public function getPointsPrey()
+    {
+        return $this->pointsPrey;
+    }
+
+    /**
+     * Set pointsHunter
+     *
+     * @param integer $pointsHunter
+     * @return User
+     */
+    public function setPointsHunter($pointsHunter)
+    {
+        $this->pointsHunter = $pointsHunter;
+    
+        return $this;
+    }
+
+    /**
+     * Get pointsHunter
+     *
+     * @return integer 
+     */
+    public function getPointsHunter()
+    {
+        return $this->pointsHunter;
     }
 }

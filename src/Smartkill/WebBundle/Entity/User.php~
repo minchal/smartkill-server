@@ -71,9 +71,14 @@ class User implements UserInterface {
     private $registeredAt;
     
     /**
-     * @ORM\Column(type="integer")
+    * @ORM\Column(name="points_prey", type="integer")
+    */
+    private $pointsPrey = 0;
+    
+    /**
+     * @ORM\Column(name="points_hunter", type="integer")
      */
-    private $points = 0;
+    private $pointsHunter = 0;
     
     /**
      * @ORM\Column(name="matches_prey", type="integer")
