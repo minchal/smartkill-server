@@ -4,44 +4,26 @@ namespace Smartkill\WebBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Ivory\GoogleMapBundle\Model\MapTypeId;
 use Smartkill\WebBundle\Entity\Match;
 use Smartkill\WebBundle\Entity\MatchUser;
 use Smartkill\WebBundle\Form\MatchType;
 
 /**
- * Match controller.
- *
- * @Route("/match")
+ * 
  */
-class MatchController extends Controller
-{
-    /**
-     * Lists all Match entities.
-     *
-     * @Route("/", name="match")
-     * @Template()
-     */
-    public function indexAction()
-    {
-        $em = $this->getDoctrine()->getManager();
+class MatchController extends Controller {
+	
+    public function indexAction()  {
+		$em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('SmartkillWebBundle:Match')->findAll();
+		$entities = $em->getRepository('SmartkillWebBundle:Match')->findAll();
+        
+		return $this->render('SmartkillWebBundle:Match:index.html.twig', array(
+			'entities' => $entities
+		));
+	}
 
-        return $this->render('SmartkillWebBundle:Match:index.html.twig', array('entities' => $entities));
-    }
-
-    /**
-     * Finds and displays a Match entity.
-     *
-     * @Route("/{id}/show", name="match_show")
-     * @Template()
-     */
-    public function showAction($id)
-    {
+    public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('SmartkillWebBundle:Match')->find($id);
@@ -61,95 +43,40 @@ class MatchController extends Controller
         );
     }
 
-    /**
-     * Displays a form to create a new Match entity.
-     *
-     * @Route("/new", name="match_new")
-     * @Template()
-     */
-    public function newAction()
-    {
+    public function addAction() {
+		$request = $this->getRequest();
         $entity = new Match();
-        $form   = $this->createForm(new MatchType(), $entity);
-        $map	= $this->get('ivory_google_map.map');
-        
-//         $geocoder = $this->get('ivory_google_map.geocoder');
-//         $lat = $geocoder->getLatitude();
-//         $lng = $geocoder->getLongtitude();
-        
-        $circle	= $this->get('ivory_google_map.circle');
-        $circle->setPrefixJavascriptVariable('circle_');
-        $circle->setCenter(51.11, 17.06, true);
-        $circle->setRadius(1000);
-        $circle->setOption('clickable', true);
-        $circle->setOption('strokeWeight', 2);
-        $map->addCircle($circle);
-        
-        $map->setPrefixJavascriptVariable('map_');
-        $map->setHtmlContainerId('map_canvas');
-        $map->setAsync(false);
-        $map->setAutoZoom(false);
-        $map->setCenter(51.11, 17.06, true);
-        $map->setMapOption('zoom', 10);
-        $map->setBound(-2.1, -3.9, 2.6, 1.4, true, true);
-        $map->setMapOption('mapTypeId', MapTypeId::ROADMAP);
-        $map->setMapOption('mapTypeId', 'roadmap');
-        
-//         $map->setMapOption('disableDefaultUI', true);
-//         $map->setMapOption('disableDoubleClickZoom', true);
-        
-        $map->setStylesheetOptions(array(
-            'width'	 => '500px',
-            'height' => '500px'
-        ));
-        
-        $map->setLanguage('pl');
-
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-            'map'	 => $map,
-        );
-    }
-
-    /**
-     * Creates a new Match entity.
-     *
-     * @Route("/create", name="match_create")
-     * @Method("POST")
-     * @Template("SmartkillWebBundle:Match:new.html.twig")
-     */
-    public function createAction(Request $request)
-    {
-    	$user 	= $this->getUser();
-        $entity = new Match();
-        $form = $this->createForm(new MatchType(), $entity);
-        $form->bind($request);
-
-        if ($form->isValid()) {
-			$entity -> setCreatedAt(new \DateTime());
-			$entity -> setCreatedBy($user);
+		$form = $this->createForm(new MatchType(), $entity);
+		
+		if ($request->getMethod()=='POST') {
+			$form->bind($request);
 			
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->persist($user);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('match_show', array('id' => $entity->getId())));
-        }
-
-        return array(
+			if ($form->isvalid()) {
+				$entity -> setCreatedAt(new \DateTime());
+				$entity -> setCreatedBy($user);
+				
+				$em = $this->getDoctrine()->getManager();
+				$em->persist($entity);
+				$em->flush();
+				
+				return $this->render('SmartkillWebBundle:Match:add_ok.html.twig');
+			}
+		}
+		
+        return $this->render('SmartkillWebBundle:Match:form.html.twig', array(
             'entity' => $entity,
-            'form'   => $form->createView(),
-        );
-    }
-
+        	'form' => $form->createView(),
+        	'title' => 'Zaplanuj mecz',
+        	'action' => 'match_add'
+        ));
+	}
+	
     /**
      * Displays a form to edit an existing Match entity.
      *
      * @Route("/{id}/edit", name="match_edit")
      * @Template()
-     */
+     
     public function editAction($id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -169,14 +96,10 @@ class MatchController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
-
+*/
     /**
      * Edits an existing Match entity.
-     *
-     * @Route("/{id}/update", name="match_update")
-     * @Method("POST")
-     * @Template("SmartkillWebBundle:Match:edit.html.twig")
-     */
+     
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -204,13 +127,11 @@ class MatchController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
-
+*/
     /**
      * Deletes a Match entity.
      *
-     * @Route("/{id}/delete", name="match_delete")
-     * @Method("POST")
-     */
+    
     public function deleteAction(Request $request, $id)
     {
         $form = $this->createDeleteForm($id);
@@ -238,12 +159,8 @@ class MatchController extends Controller
             ->getForm()
         ;
     }
+     */
     
-    /**
-    *
-    * @Route("/{id}/join", name="match_join")
-    * @Method("POST")
-    */
     public function joinAction(Request $request, $id)
     {
     	$em 	= $this->getDoctrine()->getManager();

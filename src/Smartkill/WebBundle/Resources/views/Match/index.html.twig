@@ -2,21 +2,37 @@
 
 {% block title %}SmartKill - Mecze{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?language=en&sensor=false"></script>
+{% endblock %}
+
 {% block content %}
 
 	<div class="block">
-		<h2>Mecze</h2>
+		<a href="{{ path('match_new') }}" class="btn btn-primary btn-large pull-right">Zaplanuj nowy mecz</a>
 		
-		<table class="records_list">
+		<h2>Planowane mecze</h2>
+		
+		<div class="alert alert-info">
+			Poniższa lista prezentuje trwające oraz planowane w najbliższym czasie rogrywki.<br />
+			<strong>Przejdź do szczegółów danego meczu, aby zapisać się do niego jako gracz.</strong>
+		</div>
+		
+		<table class="table table-striped table-bordered">
+			<colgroup span="1" />
+			<colgroup span="1" />
+			<colgroup span="1" width="80px" />
+			<colgroup span="1" width="50px" />
+			<colgroup span="1" />
+			<colgroup span="2" width="80px" />
 		    <thead>
 		        <tr>
 		            <th>Nazwa</th>
-		            <th>Szerokość geo.</th>
-		            <th>Długość geo.</th>
-		            <th>Promień terytorium</th>
-		            <th>Długość rozgrywki</th>
-		            <th>Termin gry</th>
-		            <th>Maks. liczba graczy</th>
+		            <th>Termin</th>
+		            <th>Lokalizacja</th>
+		            <th>Długość</th>
+		            <th>Graczy</th>
 		            <th colspan="2">Akcje</th>
 		        </tr>
 		    </thead>
@@ -24,20 +40,53 @@
 		    {% for entity in entities %}
 		        <tr>
 		            <td>{{ entity.name }}</td>
-		            <td>{{ entity.lat }}</td>
-		            <td>{{ entity.lng }}</td>
-		            <td>{{ entity.size }}</td>
+		            <td>{{ entity.dueDate|date('Y-m-d H:i') }}</td>
+		            <td>
+						<a href="#mapModal" role="button" class="btn btn-small mapModalBtn" 
+							data-lat="{{ entity.lat }}"
+							data-lng="{{ entity.lng }}"
+							data-radius="{{ entity.size }}">
+							<i class="icon-globe"></i> Mapa
+						</a>
+					</td>
 		            <td>{{ entity.length }}</td>
-		            <td>{% if entity.dueDate %}{{ entity.dueDate|date('Y-m-d H:i') }}{% endif %}</td>
-		            <td>{{ entity.maxPlayers }}</td>
-		            <td><a href="{{ path('match_show', { 'id': entity.id }) }}">Zobacz</a></td>
-					<td><a href="{{ path('match_edit', { 'id': entity.id }) }}">Edytuj</a></td>
+		            <td> / {{ entity.maxPlayers }}</td>
+		            <td><a class="btn btn-small btn-block" href="{{ path('match_show', { 'id': entity.id }) }}"><i class="icon-eye-open"></i> Zobacz</a></td>
+					<td><a class="btn btn-small btn-block" href="{{ path('match_edit', { 'id': entity.id }) }}"><i class="icon-edit"></i> Edytuj</a></td>
 		        </tr>
 		    {% endfor %}
 		    </tbody>
 		</table>
 		
-		<a href="{{ path('match_new') }}" class="btn btn-primary btn-large pull-right">Stwórz nowy mecz</a>
+		<div id="mapModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3>Lokalizacja</h3>
+			</div>
+			<div class="modal-body">
+				<div id="map_canvas" style="height: 200px;"></div>
+			</div>
+		</div>
+		
+		<script>
+			$('#mapModal').modal({show:false});
+			
+			$('.mapModalBtn').click(function(){
+				var $this = $(this);
+				var lat = parseFloat($this.data('lat'));
+				var lng = parseFloat($this.data('lng'));
+				var rad = parseFloat($this.data('radius'));
+				
+				$('#mapModal').modal('show');
+				
+				$('#mapModal').on('shown', function () {
+					var center = new google.maps.LatLng(lat, lng, true);
+					var map = new google.maps.Map(document.getElementById("map_canvas"), {"mapTypeId":google.maps.MapTypeId.ROADMAP,"zoom":10});
+					var circle = new google.maps.Circle({"map":map,"center":center,"radius":rad*1000,"strokeWeight":2});
+					map.setCenter(center);
+				});
+			});
+		</script>
 	</div>
 
 {% endblock %}

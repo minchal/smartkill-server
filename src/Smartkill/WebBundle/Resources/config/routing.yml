@@ -10,38 +10,6 @@ register:
     pattern:  /register
     defaults: { _controller: SmartkillWebBundle:User:register }
 
-match:
-    pattern:  /match/
-    defaults: { _controller: SmartkillWebBundle:Match:index }
-
-match_show:
-    pattern:  /match/{id}/show
-    defaults: { _controller: SmartkillWebBundle:Match:show }
-
-match_new:
-    pattern:  /match/new
-    defaults: { _controller: SmartkillWebBundle:Match:new }
-    
-match_create:
-    pattern:  /match/create
-    defaults: { _controller: SmartkillWebBundle:Match:create }
-    
-match_edit:
-    pattern:  /match/{id}/edit
-    defaults: { _controller: SmartkillWebBundle:Match:edit }
-        
-match_update:
-    pattern:  /match/{id}/update
-    defaults: { _controller: SmartkillWebBundle:Match:update }
-        
-match_delete:
-    pattern:  /match/{id}/delete
-    defaults: { _controller: SmartkillWebBundle:Match:delete }
-    
-match_join:
-    pattern:  /match/{id}/join
-    defaults: { _controller: SmartkillWebBundle:Match:join }
-        
 login:
     pattern:  /login
     defaults: { _controller: SmartkillWebBundle:User:login }
@@ -52,3 +20,30 @@ login_check:
 
 logout:
     pattern:  /logout
+    
+
+match:
+    pattern:  /match/
+    defaults: { _controller: SmartkillWebBundle:Match:index }
+
+match_add:
+    pattern:  /match/add
+    defaults: { _controller: SmartkillWebBundle:Match:add }
+    
+match_show:
+    pattern:  /match/{id}/show
+    defaults: { _controller: SmartkillWebBundle:Match:show }
+
+match_edit:
+    pattern:  /match/{id}/edit
+    defaults: { _controller: SmartkillWebBundle:Match:edit }
+    
+match_delete:
+    pattern:  /match/{id}/delete
+    defaults: { _controller: SmartkillWebBundle:Match:delete }
+    
+match_join:
+    pattern:  /match/{id}/join
+    defaults: { _controller: SmartkillWebBundle:Match:join }
+    
+

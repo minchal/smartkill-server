@@ -10,10 +10,6 @@ use Smartkill\WebBundle\Form\Type\RegistrationType;
 
 class UserController extends Controller {
 	
-    public function indexAction() {
-        
-    }
-    
     public function loginAction() {
         $request = $this->getRequest();
         $session = $request->getSession();
