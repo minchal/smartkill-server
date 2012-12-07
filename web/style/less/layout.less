@@ -12,22 +12,34 @@ body {
 }
 
 #top {
-	position: relative; height: 330px;
+	position: relative; height: 180px;
 	margin: 0 0 20px 0;
 	.border-radius(10px);
 	#gradient.directional(#740005, #310A0C);
 	
 	img {
-		position: absolute; top: 70px; left: 60px;
+		position: absolute; top: 60px; left: 60px;
+		height: 100px;
 	}
 	
 	h1 {
-		position: absolute; top: 140px; left: 400px;
-		font-size: 50px; text-align: center;
+		position: absolute; top: 60px; left: 420px;
+		font-size: 40px; text-align: center;
 		text-shadow: 2px 2px 0 #310002;
 		
 		a {color: #fff;}
-		small {font-family: @serifFontFamily; font-style: italic; font-size: 30px;}
+		small {font-family: @serifFontFamily; font-style: italic; font-size: 20px;}
+	}
+	
+	&.top-big {
+		height: 330px;
+		
+		img {top: 70px; height: auto;}
+		h1 {
+			top: 140px; left: 400px;
+			font-size: 50px;
+			small {font-size: 30px;}
+		}
 	}
 }
 

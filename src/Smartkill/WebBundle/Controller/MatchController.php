@@ -33,20 +33,21 @@ class MatchController extends Controller {
             throw $this->createNotFoundException('Unable to find Match entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
+       // $deleteForm = $this->createDeleteForm($id);
         
-        return array(
+        return $this->render('SmartkillWebBundle:Match:show.html.twig', array(
             'entity'      => $entity,
             'user'        => $user,
             'joined'	  => $em->getRepository('SmartkillWebBundle:MatchUser')->find(array('user'=>$user->getId(), 'match'=>$entity->getId())),
-            'delete_form' => $deleteForm->createView(),
-        );
+            //'delete_form' => $deleteForm->createView(),
+        ));
     }
 
     public function addAction() {
 		$request = $this->getRequest();
-        $entity = new Match();
-		$form = $this->createForm(new MatchType(), $entity);
+		$user    = $this->getUser();
+        $entity  = new Match();
+		$form    = $this->createForm(new MatchType(), $entity);
 		
 		if ($request->getMethod()=='POST') {
 			$form->bind($request);
@@ -59,7 +60,12 @@ class MatchController extends Controller {
 				$em->persist($entity);
 				$em->flush();
 				
-				return $this->render('SmartkillWebBundle:Match:add_ok.html.twig');
+				$this->get('session')->setFlash(
+					'success',
+					'Mecz został pomyślnie utworzony!'
+				);
+				
+				return $this->redirect($this->generateUrl('match'));
 			}
 		}
 		

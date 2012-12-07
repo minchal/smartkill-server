@@ -2,78 +2,94 @@
 
 {% block title %}SmartKill - Mecze{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?language=en&sensor=false"></script>
+{% endblock %}
+
 {% block content %}
 
 	<div class="block">
-		<h2>Mecz: {{ entity.name }} </h2>
-
-		<table class="record_properties">
-		    <tbody>
-		        <tr>
-		            <th>Id</th>
-		            <td>{{ entity.id }}</td>
-		        </tr>
-		        <tr>
-		            <th>Nazwa</th>
-		            <td>{{ entity.name }}</td>
-		        </tr>
-		        <tr>
-		            <th>Szerokość geo.</th>
-		            <td>{{ entity.lat }}</td>
-		        </tr>
-		        <tr>
-		            <th>Długość geo.</th>
-		            <td>{{ entity.lng }}</td>
-		        </tr>
-		        <tr>
-		            <th>Promień terytorium</th>
-		            <td>{{ entity.size }}</td>
-		        </tr>
-		        <tr>
-		            <th>Długość rozgrywki</th>
-		            <td>{{ entity.length }}</td>
-		        </tr>
-		        <tr>
-		            <th>Termin gry</th>
-		            <td>{{ entity.dueDate|date('Y-m-d H:i') }}</td>
-		        </tr>
-		        <tr>
-		            <th>Maks. liczba graczy</th>
-		            <td>{{ entity.maxPlayers }}</td>
-		        </tr>
-		        <tr>
-		            <th>Data utworzenia</th>
-		            <td>{{ entity.createdAt|date('Y-m-d H:i:s') }}</td>
-		        </tr>
-		    </tbody>
-		</table>
+		<ul class="nav nav-pills pull-right">
+			<li><a href="{{ path('match_edit', { 'id': entity.id }) }}"><i class="icon-pencil"></i> Edytuj</a></li>
+			<li><a href="{{ path('match_delete', { 'id': entity.id }) }}"><i class="icon-remove"></i> Usuń</a></li>
+		</ul>
 		
-		<ul class="record_actions">
-		    <li>
-		        <a href="{{ path('match') }}">
-		            Powrót do listy
-		        </a>
-		    </li>
-		    <li>
-		        <a href="{{ path('match_edit', { 'id': entity.id }) }}">
-		            Edytuj
-		        </a>
-		    </li>
-		    <li>
-		    	{% if joined == false %}
+		<h2>Mecz: {{ entity.name }} </h2>
+		
+		<div class="row-fluid">
+			<div class="span5">
+				<div id="map_canvas" class="map-canvas" style="height: 250px;"></div>
+				<script>
+					$(function(){
+						var center = new google.maps.LatLng({{ entity.lat }}, {{ entity.lng }}, true);
+						
+						var map = new google.maps.Map(document.getElementById('map_canvas'), {
+							mapTypeId: google.maps.MapTypeId.ROADMAP,
+							zoom: 10
+						});
+						
+						map.setCenter(center);
+						
+						var circle = new google.maps.Circle({
+							map: map,
+							center: center,
+							radius: {{ entity.size }} * 1000,
+							strokeWeight: 2
+						});
+					});
+				</script>
+				
+				{% if joined == false %}
 			    	<form action="{{ path('match_join', { 'id': entity.id }) }}" method="post">
 			            <input type="password" name="pass" />
 			            <button type="submit">Dołącz</button>
 			        </form>
 				{% endif %}
-		    </li>
-		    <li>
-		        <form action="{{ path('match_delete', { 'id': entity.id }) }}" method="post">
-		            {{ form_widget(delete_form) }}
-		            <button class="btn btn-primary btn-large pull-right" type="submit">Usuń</button>
-		        </form>
-		    </li>
-		</ul>
+				<a class="btn btn-primary btn-large btn-block">Dołącz</a>
+			</div>
+			<div class="span7">
+				<table class="table">
+					<colgroup span="1" width="150px" />
+					<tr>
+						<td><strong>Organizator:</strong></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td><strong>Data rozpoczęcia:</strong></td>
+						<td>{{ entity.dueDate|date('Y-m-d H:i') }}</td>
+					</tr>
+					<tr>
+						<td><strong>Czas trwania:</strong></td>
+						<td>{{ entity.getLengthDesc }}</td>
+					</tr>
+					<tr>
+						<td><strong>Graczy:</strong></td>
+						<td>0 / {{ entity.maxPlayers }}</td>
+					</tr>
+					<tr>
+						<td><strong>Lokalizacja:</strong></td>
+						<td>Lat: {{ entity.lat }}, Lng: {{ entity.lng }}, R={{ entity.size }}</td>
+					</tr>
+				</table>
+				
+				<legend>Łowcy</legend>
+				<div class="well">
+					<div class="user">
+						<a href="#">
+							<img src="" alt="" />
+							NazwaUsera
+						</a>
+					</div>
+				</div>
+				
+				<legend>Ofiary</legend>
+				<div class="well">
+					
+				</div>
+			</div>
+		</div>
+		
 	</div>
 
 {% endblock %}

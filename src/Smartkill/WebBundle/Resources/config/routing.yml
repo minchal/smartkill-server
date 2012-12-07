@@ -46,6 +46,7 @@ match_join:
     pattern:  /match/{id}/join
     defaults: { _controller: SmartkillWebBundle:Match:join }
     
+
 ranking:
     pattern:  /ranking/{page}
     defaults: { _controller: SmartkillWebBundle:User:ranking, page: 1 }

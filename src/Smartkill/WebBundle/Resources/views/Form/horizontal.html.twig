@@ -26,3 +26,7 @@
 		</div>
 	</div>
 {% endblock field_row %}
+
+{% block datetime_widget %}
+	{{ form_widget(form, {'type':'datetime-local'}) }}
+{% endblock %}

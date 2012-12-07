@@ -22,7 +22,8 @@
 				<div class="nav-collapse collapse">
 					{% if app.user %}
 						<p class="navbar-text pull-right">
-							Witaj <strong><a href="#" class="navbar-link">{{ app.user.username }}</a></strong> | 
+							Witaj <strong><a href="#" class="navbar-link">{{ app.user.username }}</a></strong> |
+							<a href="{{ path('logout') }}" class="navbar-link">Profil</a> |
 							<a href="{{ path('logout') }}" class="navbar-link">Wyloguj</a>
 						</p>
 					{% else %}
@@ -34,10 +35,11 @@
 					{% endif %}
 					
 					<ul class="nav">
-						<li class="active"><a href="{{ path('index') }}">Home</a></li>
-						<li><a href="{{ path('match') }}">Mecze</a></li>
-						<li><a href="{{ path('ranking') }}">Ranking</a></li>
-						<li><a href="{{ path('contact') }}">Kontakt</a></li>
+						{% set r = app.request.get('_route') %}
+						<li{% if r=='index'   %} class="active"{% endif %}><a href="{{ path('index') }}">Home</a></li>
+						<li{% if r=='match'   %} class="active"{% endif %}><a href="{{ path('match') }}">Mecze</a></li>
+						<li{% if r=='ranking' %} class="active"{% endif %}><a href="{{ path('ranking') }}">Ranking</a></li>
+						<li{% if r=='contact' %} class="active"{% endif %}><a href="{{ path('contact') }}">Kontakt</a></li>
 					</ul>
 				</div>
 			</div>
@@ -55,8 +57,16 @@
 		</div>
 		
 		{% for flashMessage in app.session.flashbag.get('notice') %}
-			<div class="alert alert-error">
-				<em>Notice</em>: {{ flashMessage }}
+			<div class="alert alert-error fade in">
+				<a class="close" data-dismiss="alert" href="#">&times;</a>
+				{{ flashMessage }}
+			</div>
+		{% endfor %}
+		
+		{% for flashMessage in app.session.flashbag.get('success') %}
+			<div class="alert alert-success fade in">
+				<a class="close" data-dismiss="alert" href="#">&times;</a>
+				{{ flashMessage }}
 			</div>
 		{% endfor %}
 		

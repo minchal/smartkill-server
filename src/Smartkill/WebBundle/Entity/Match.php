@@ -28,7 +28,7 @@ class Match {
     
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
-     * @Assert\MinLength(limit=5)
+     * @Assert\MaxLength(limit=20)
      */
     private $password;
     
@@ -82,7 +82,6 @@ class Match {
         $this->dueDate = new \DateTime();
     }
     
-
     /**
      * Get id
      *
@@ -229,6 +228,13 @@ class Match {
     public function getLength()
     {
         return $this->length;
+    }
+    
+    public function getLengthDesc()
+    {
+		$h = floor($this->length / 60);
+		$m = $this->length % 60;
+        return $h.':'.($m<10?'0':'').$m;
     }
 
     /**
