@@ -9,7 +9,11 @@ use Doctrine\ORM\NoResultException;
 class MatchUserController extends Controller {
 	
     public function positionAction() {
-		$this->checkSession();
+    	$session = $this->checkSession();
+		if ($session instanceof Response) {
+			return $session;
+		}
+		
 		$request = $this -> getRequest();
 		
 		$user  = $request->request->get('user');
@@ -65,6 +69,49 @@ class MatchUserController extends Controller {
     	return true;
     }
 	
+	public function isJoinedAction() {
+		$session = $this->checkSession();
+		if ($session instanceof Response) {
+			return $session;
+		}
+		
+		$request = $this->getRequest();
+	
+		$user  = $session->getUser();
+		$match = $request->request->get('match');
+	
+		$repository = $this->getDoctrine()->getRepository('SmartkillWebBundle:MatchUser');
+		$result = $repository->findOneBy(array('match' => $match, 'user' => $user->getId()));
+		
+		return $this -> jsonResponse(array('is_joined'=>($result ? true : false)));
+	}
+	
+	public function userGamesAction() {
+		$session = $this->checkSession();
+		if ($session instanceof Response) {
+			return $session;
+		}
+		
+		$request = $this->getRequest();
+	
+		$user = $session->getUser();
+		$query = $this->getDoctrine()->getManager()
+			->createQuery(
+				'SELECT m FROM SmartkillWebBundle:MatchUser mu
+			 		JOIN SmartkillWebBundle:Match m WITH mu.match = m.id
+			 		WHERE mu.user = :id'
+			  )
+			->setParameter('id', $user->getId());
+	    
+	    try {
+	    	$games = $query->getResult();
+	    	$serializer = $this->get('serializer');
+	    	return $this -> jsonResponse($serializer->serialize(array('status' => 'success', 'games'=>$games), 'json'));
+	    } catch (NoResultException $e) {
+	    	return $this -> jsonResponse(array('msg'=>'List is empty'),'error');
+	    }
+	}
+	
 	private function checkSession() {
 		$request = $this -> getRequest();
 		$repo = $this->getDoctrine()->getRepository('SmartkillAPIBundle:Session');
@@ -74,6 +121,8 @@ class MatchUserController extends Controller {
 		if (!$session) {
 			return $this -> jsonResponse(array('msg'=>'Session not found'),'error');
 		}
+		
+		return $session;
 	}
     
     private function jsonResponse($args = array(), $status = 'success') {

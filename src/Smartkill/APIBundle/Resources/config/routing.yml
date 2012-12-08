@@ -13,3 +13,11 @@ api_matches:
 api_position:
     pattern:  /position
     defaults: { _controller: SmartkillAPIBundle:MatchUser:position }
+
+api_isJoined:
+    pattern:  /isJoined
+    defaults: { _controller: SmartkillAPIBundle:MatchUser:isJoined }
+
+api_userGames:
+    pattern:  /userGames
+    defaults: { _controller: SmartkillAPIBundle:MatchUser:userGames }

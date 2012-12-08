@@ -13,4 +13,4 @@ curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
 $page = curl_exec($c);
 curl_close($c);
 
-echo $page;
+echo '<pre>'.htmlspecialchars($page);
