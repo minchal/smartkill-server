@@ -2,6 +2,3 @@ parameters:
 #    smartkill_web.example.class: Smartkill\WebBundle\Example
 
 services:
-#    smartkill_web.example:
-#        class: %smartkill_web.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]

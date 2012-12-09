@@ -2,15 +2,19 @@
 
 namespace Smartkill\WebBundle\Controller;
 
+use Smartkill\WebBundle\Entity\User;
+use Smartkill\WebBundle\Form\RegistrationType;
+use Smartkill\WebBundle\Form\ProfileType;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use Smartkill\WebBundle\Entity\User;
-use Smartkill\WebBundle\Form\RegistrationType;
-use Smartkill\WebBundle\Form\ProfileType;
-
+use Pagerfanta\Pagerfanta;
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Exception\NotValidCurrentPageException;
+    
 class UserController extends Controller {
 	
     public function loginAction() {
@@ -181,27 +185,22 @@ class UserController extends Controller {
 	public function rankingAction($page) {
 		$repository = $this->getDoctrine()->getRepository('SmartkillWebBundle:User');
 		
-		// pagination
-		$total = $repository->createQueryBuilder('u')->getQuery()->getResult();
-		$total_entities    = count($total);
-		$entities_per_page = $this->container->getParameter('max_on_listing');
-		$last_page         = ceil($total_entities / $entities_per_page);
-		$previous_page     = $page > 1 ? $page - 1 : 1;
-		$next_page         = $page < $last_page ? $page + 1 : $last_page;
+		$query = $repository->createQueryBuilder('u')
+			->orderBy('u.pointsPrey + u.pointsHunter','DESC')
+			->getQuery();
 		
-		$entities = $repository->createQueryBuilder('u')
-			->setFirstResult(($page * $entities_per_page) - $entities_per_page)
-			->setMaxResults($this->container->getParameter('max_on_listing'))
-			->orderBy('u.pointsHunter + u.pointsPrey', 'DESC')
-			->getQuery()
-			->getResult();
+		try {
+			$pager = new Pagerfanta(new DoctrineORMAdapter($query));
+			
+			$pager
+				->setMaxPerPage(20)
+				->setCurrentPage($page);
+		} catch(NotValidCurrentPageException $e) {
+			throw $this->createNotFoundException();
+		}
 		
 		return $this->render('SmartkillWebBundle:User:ranking.html.twig', array(
-		            'entities'		=> $entities,
-		            'previous_page'	=> $previous_page,
-		            'current_page'	=> $page,
-		            'next_page'		=> $next_page,
-		            'last_page'		=> $last_page,
+			'pager' => $pager
 		));
 	}
 }

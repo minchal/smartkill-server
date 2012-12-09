@@ -20,7 +20,8 @@
         "jms/di-extra-bundle": "1.1.*",
         "jms/serializer-bundle": "0.9.*",
         "egeloen/google-map-bundle": "1.0.*",
-        "liip/imagine-bundle": "*"
+        "liip/imagine-bundle": "*",
+        "white-october/pagerfanta-bundle": "*"
     },
     "scripts": {
         "post-install-cmd": [

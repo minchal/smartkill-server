@@ -254,8 +254,8 @@ legend+.control-group{margin-top:20px;-webkit-margin-top-collapse:separate;}
 .form-horizontal input+.help-block,.form-horizontal select+.help-block,.form-horizontal textarea+.help-block{margin-top:10px;}
 .form-horizontal .form-actions{padding-left:180px;}
 table{max-width:100%;background-color:transparent;border-collapse:collapse;border-spacing:0;}
-.table{width:100%;margin-bottom:20px;}.table th,.table td{padding:8px;line-height:20px;text-align:left;vertical-align:top;border-top:1px solid #dddddd;}
-.table th{font-weight:bold;}
+.table{width:100%;margin-bottom:20px;}.table th,.table td{padding:8px;line-height:20px;vertical-align:middle;border-top:1px solid #dddddd;}
+.table th{font-weight:bold;text-align:center;}.table th .tooltip{font-weight:normal;}
 .table thead th{vertical-align:bottom;}
 .table caption+thead tr:first-child th,.table caption+thead tr:first-child td,.table colgroup+thead tr:first-child th,.table colgroup+thead tr:first-child td,.table thead:first-child tr:first-child th,.table thead:first-child tr:first-child td,.table tbody:first-child tr:first-child td,.table colgroup+tbody tr:first-child td{border-top:0;}
 .table tbody+tbody{border-top:2px solid #dddddd;}
@@ -761,3 +761,4 @@ body{background:none;}
 .user{float:left;width:75px;margin:0 10px 0 0;padding:3px;text-align:center;background:#fff;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;-webkit-box-shadow:0 0 3px #999999;-moz-box-shadow:0 0 3px #999999;box-shadow:0 0 3px #999999;}
 .user a{display:block;}
 .user img{display:block;margin:0 0 3px 0;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;}
+.table-user img{vertical-align:middle;margin:0 10px 0 0;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;}

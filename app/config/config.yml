@@ -60,6 +60,7 @@ swiftmailer:
     password:  %mailer_password%
     spool:     { type: memory }
 
+# liip imagine thumbnails
 liip_imagine:
     cache_base_path: %imagine_base_path%
     
@@ -76,3 +77,20 @@ liip_imagine:
             quality: 90
             filters:
                 thumbnail: { size: [75, 75], mode: outbound }
+        avatar_xsmall:
+            quality: 90
+            filters:
+                thumbnail: { size: [40, 40], mode: outbound }
+
+# pagerfanta pagination
+white_october_pagerfanta:
+    default_view: bootstrap
+    
+services:
+    pagerfanta.view.bootstrap:
+        class: Pagerfanta\View\OptionableView
+        arguments:
+            - @pagerfanta.view.twitter_bootstrap
+            - { proximity: 4, prev_message: '«', next_message: '»', css_container_class: 'pagination pagination-centered' }
+        public: false
+        tags: [{ name: pagerfanta.view, alias: bootstrap }]

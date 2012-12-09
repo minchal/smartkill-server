@@ -37,8 +37,9 @@ user:
 
 match:
     pattern:  /match/
-    defaults: { _controller: SmartkillWebBundle:Match:index }
-
+    defaults: { _controller: SmartkillWebBundle:Match:index, page: 1 }
+    requirements: { page: "\d+"}
+    
 match_add:
     pattern:  /match/add
     defaults: { _controller: SmartkillWebBundle:Match:add }
@@ -70,3 +71,4 @@ match_user_delete:
 ranking:
     pattern:  /ranking/{page}
     defaults: { _controller: SmartkillWebBundle:User:ranking, page: 1 }
+    requirements: { page: "\d+"}

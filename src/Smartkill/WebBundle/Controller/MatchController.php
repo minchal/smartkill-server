@@ -2,22 +2,40 @@
 
 namespace Smartkill\WebBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Smartkill\WebBundle\Entity\Match;
 use Smartkill\WebBundle\Entity\MatchUser;
 use Smartkill\WebBundle\Form\MatchType;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+use Pagerfanta\Pagerfanta;
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Exception\NotValidCurrentPageException;
+
 class MatchController extends Controller {
 	
-    public function indexAction()  {
+    public function indexAction($page)  {
 		$em = $this->getDoctrine()->getManager();
-
-		$entities = $em->getRepository('SmartkillWebBundle:Match')->findAll();
-        
+		$repository = $em->getRepository('SmartkillWebBundle:Match');
+		
+		$query = $repository->createQueryBuilder('m')
+			->orderBy('m.dueDate','ASC')
+			->getQuery();
+		
+		try {
+			$pager = new Pagerfanta(new DoctrineORMAdapter($query));
+			
+			$pager
+				->setMaxPerPage(20)
+				->setCurrentPage($page);
+		} catch(NotValidCurrentPageException $e) {
+			throw $this->createNotFoundException();
+		}
+		
 		return $this->render('SmartkillWebBundle:Match:index.html.twig', array(
-			'entities' => $entities
+			'pager' => $pager
 		));
 	}
 

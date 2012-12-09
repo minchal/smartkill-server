@@ -22,27 +22,26 @@
 		
 		<table class="table table-striped table-bordered">
 			<colgroup span="1" />
-			<colgroup span="1" width="150px" />
 			<colgroup span="1" width="80px" />
-			<colgroup span="2" width="100px" />
-			<colgroup span="1" width="20px" />
+			<colgroup span="1" width="150px" align="center" />
+			<colgroup span="2" width="60px" align="right" />
+			<colgroup span="1" width="20px" align="center" />
 			<colgroup span="1" width="110px" />
 		    <thead>
 		        <tr>
 		            <th>Nazwa</th>
-		            <th>Termin</th>
 		            <th>Lokalizacja</th>
-		            <th>Czas trwania</th>
-		            <th>Graczy</th>
+		            <th>Termin</th>
+		            <th>Długość</th>
+					<th><div rel="tooltip" title="Zapisanych / Maksymalnie">Graczy</div></th>
 		            <th>Hasło</th>
 		            <th></th>
 		        </tr>
 		    </thead>
 		    <tbody>
-		    {% for entity in entities %}
+		    {% for entity in pager.currentPageResults %}
 		        <tr>
 		            <td>{{ entity.name }}</td>
-		            <td>{{ entity.dueDate|date('Y-m-d H:i') }}</td>
 		            <td>
 						<a href="#mapModal" role="button" class="btn btn-small btn-block mapModalBtn" 
 							data-lat="{{ entity.lat }}"
@@ -51,6 +50,7 @@
 							<i class="icon-globe"></i> Mapa
 						</a>
 					</td>
+		            <td>{{ entity.dueDate|date('Y-m-d H:i') }}</td>
 		            <td>{{ entity.getLengthDesc }}</td>
 		            <td>{{ entity.players.count }} / {{ entity.maxPlayers }}</td>
 		            <td>{% if entity.password %}<i class="icon-ok"></i>{% endif %}</td>
@@ -59,6 +59,8 @@
 		    {% endfor %}
 		    </tbody>
 		</table>
+		
+		{{ pagerfanta(pager) }}
 		
 		<div id="mapModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-header">
