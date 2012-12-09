@@ -100,17 +100,17 @@ class User implements UserInterface {
     private $matchesHunter = 0;
     
     /**
-     * @ORM\OneToMany(targetEntity="Smartkill\APIBundle\Entity\Session", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Smartkill\APIBundle\Entity\Session", mappedBy="user", cascade="remove")
      */
     protected $sessions;
     
     /**
-     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\Match", mappedBy="createdBy")
+     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\Match", mappedBy="createdBy", cascade="remove")
      */
     protected $createdMatches;
     
     /**
-     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\MatchUser", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\MatchUser", mappedBy="user", cascade="remove")
      */
     protected $playedMatches;
 	

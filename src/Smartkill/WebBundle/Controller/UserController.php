@@ -5,16 +5,19 @@ namespace Smartkill\WebBundle\Controller;
 use Smartkill\WebBundle\Entity\User;
 use Smartkill\WebBundle\Form\RegistrationType;
 use Smartkill\WebBundle\Form\ProfileType;
+use Smartkill\WebBundle\Form\UserType;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\SecurityContext;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\FormError;
 
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
-    
+
 class UserController extends Controller {
 	
     public function loginAction() {
@@ -66,20 +69,12 @@ class UserController extends Controller {
         return $this->render('SmartkillWebBundle:User:register.html.twig', array('form' => $form->createView()));
 	}
 	
-	public function profileAction($id) {
+	public function profileAction() {
 		$request = $this->getRequest();
 		$em      = $this->getDoctrine()->getManager();
 		
-		if (!$id) {
-			$id = $this -> getUser() -> getId();
-		}
-		
-		$user = $em->getRepository('SmartkillWebBundle:User')->find($id);
+		$user = $this -> getUser();
 		$old  = clone $user;
-		
-		if (!$user) {
-			throw $this->createNotFoundException('Nie znaleziono takiego użytkownika.');
-		}
 		
 		$factory = $this->get('security.encoder_factory');
 		$encoder = $factory->getEncoder($user);
@@ -123,19 +118,11 @@ class UserController extends Controller {
         ));
 	}
 	
-	public function avatarAction($id) {
+	public function avatarAction() {
 		$request = $this->getRequest();
 		$em      = $this->getDoctrine()->getManager();
 		
-		if (!$id) {
-			$id = $this -> getUser() -> getId();
-		}
-		
-		$user = $em->getRepository('SmartkillWebBundle:User')->find($id);
-		
-		if (!$user) {
-			throw $this->createNotFoundException('Nie znaleziono takiego użytkownika.');
-		}
+		$user = $this -> getUser();
 		
 		$form = $this->createFormBuilder($user)
         	->add('avatarFile', 'file', array('label'=>'Wybierz plik:', 'required'=>false, 'constraints'=> new NotBlank()))
@@ -152,7 +139,7 @@ class UserController extends Controller {
 				
 				$cm = $this->get('liip_imagine.cache.manager');
 				
-				foreach (array('avatar_large','avatar_medium','avatar_small') as $f) {
+				foreach ($this->container->getParameter('liip_imagine.filter_sets') as $f => $v) {
 					$cm->remove($user->getAvatarUrl(), $f);
 				}
 				
@@ -178,7 +165,8 @@ class UserController extends Controller {
 		$user = $em->getRepository('SmartkillWebBundle:User')->findOneByUsername($username);
 		
         return $this->render('SmartkillWebBundle:User:public.html.twig', array(
-        	'entity' => $user
+        	'entity' => $user,
+			'deleteForm'  => $this->createDeleteForm($user->getId())->createView(),
         ));
 	}
 	
@@ -202,5 +190,85 @@ class UserController extends Controller {
 		return $this->render('SmartkillWebBundle:User:ranking.html.twig', array(
 			'pager' => $pager
 		));
+	}
+	
+    public function editAction($id) {
+		$request = $this->getRequest();
+		$em      = $this->getDoctrine()->getManager();
+        $entity  = $em->getRepository('SmartkillWebBundle:User')->find($id);
+        $old     = clone $entity;
+		
+		$factory = $this->get('security.encoder_factory');
+		$encoder = $factory->getEncoder($entity);
+		
+		$form    = $this->createForm(new UserType(), $entity);
+		
+		if ($request->getMethod() == 'POST') {
+			$form->bind($request);
+			
+			if ($form->isvalid()) {
+				if ($entity->getPassword()) {
+					$password = $encoder->encodePassword($entity->getPassword(), $entity->getSalt());
+					$entity -> setPassword($password);
+				} else {
+					$entity->setPassword($old->getPassword());
+				}
+				
+				$em->persist($entity);
+				$em->flush();
+				
+				$this->get('session')->setFlash(
+					'success',
+					'Zmiany w profilu zostały zapisane!'
+				);
+				
+				return $this->redirect($this->generateUrl('user',array('username'=>$entity->getUsername())));
+			}
+		}
+		
+        return $this->render('SmartkillWebBundle:User:form.html.twig', array(
+            'entity'     => $entity,
+        	'form'       => $form->createView()
+        ));
+	}
+	
+	public function deleteAction(Request $request, $id) {
+		$em = $this->getDoctrine()->getManager();
+		$entity = $em->getRepository('SmartkillWebBundle:User')->find($id);
+		
+		if (!$entity) {
+			throw $this->createNotFoundException();
+		}
+		
+		$form = $this->createDeleteForm($id)->bind($request);
+		
+		if ($form->isValid()) {
+			if (!$request->get('yes')) {
+				return $this->redirect($this->generateUrl('user', array('username'=>$entity->getUsername())));
+			}
+			
+			$em->remove($entity);
+			$em->flush();
+			
+			$this->get('session')->setFlash(
+				'success',
+				'Użytkownik został usunięty!'
+			);
+			
+			return $this->redirect($this->generateUrl('ranking'));
+		}
+		
+        return $this->render('SmartkillWebBundle:Form:question.html.twig', array(
+        	'form'       => $form->createView(),
+        	'title'      => 'Usuń użytkownika',
+        	'question'   => 'Czy jesteś pewny, że chcesz usunąć użytkownika "'.$entity->getUsername().'"?'
+        ));
+	}
+	
+	private function createDeleteForm($id) {
+		return $this->createFormBuilder(array('id' => $id))
+			->add('id', 'hidden')
+			->getForm()
+		;
 	}
 }

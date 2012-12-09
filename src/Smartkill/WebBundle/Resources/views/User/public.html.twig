@@ -1,10 +1,21 @@
 {% extends 'SmartkillWebBundle::layout.html.twig' %}
 
+{% import 'SmartkillWebBundle:Form:question.html.twig' as question %}
+
 {% block title %}SmartKill - {{ entity.username }}{% endblock %}
 
 {% block content %}
 
 	<div class="block">
+		<ul class="nav nav-pills pull-right">
+			<li><a href="{{ path('user_edit', { 'id': entity.id }) }}"><i class="icon-pencil"></i> Edytuj</a></li>
+			<li><a href="#deleteModal" data-toggle="modal"><i class="icon-remove"></i> Usuń</a></li>
+		</ul>
+		
+		<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+			{{ question.modal('Usuń użytkownika', 'Czy jesteś pewien, że chcesz usunąć użytkownika?', deleteForm, path('user_delete', { 'id': entity.id })) }}
+		</div>
+		
 		<h2>Użytkownik: {{ entity.username }}</h2>
 		
 		<div class="row-fluid">

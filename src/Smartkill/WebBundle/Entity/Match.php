@@ -90,7 +90,7 @@ class Match {
     private $createdBy;
 	
     /**
-     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\MatchUser", mappedBy="match")
+     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\MatchUser", mappedBy="match", cascade="remove")
      */
     private $players;
     

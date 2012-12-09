@@ -141,7 +141,7 @@ class MatchController extends Controller {
 		$entity = $em->getRepository('SmartkillWebBundle:Match')->find($id);
 		
 		if (!$entity) {
-			throw $this->createNotFoundException('Unable to find Match entity.');
+			throw $this->createNotFoundException();
 		}
 		
 		$form = $this->createDeleteForm($id)->bind($request);

@@ -22,17 +22,29 @@ logout:
     pattern:  /logout
     
 profile:
-    pattern:  /profile/{id}
-    defaults: { _controller: SmartkillWebBundle:User:profile, id: null }
+    pattern:  /profile
+    defaults: { _controller: SmartkillWebBundle:User:profile }
     
 avatar:
-    pattern:  /avatar/{id}
-    defaults: { _controller: SmartkillWebBundle:User:avatar, id: null }
+    pattern:  /avatar
+    defaults: { _controller: SmartkillWebBundle:User:avatar }
 
 user:
     pattern:  /user/{username}
     defaults: { _controller: SmartkillWebBundle:User:public }
 
+user_edit:
+    pattern:  /user/{id}/edit
+    defaults: { _controller: SmartkillWebBundle:User:edit }
+    
+user_delete:
+    pattern:  /user/{id}/delete
+    defaults: { _controller: SmartkillWebBundle:User:delete }
+
+ranking:
+    pattern:  /ranking/{page}
+    defaults: { _controller: SmartkillWebBundle:User:ranking, page: 1 }
+    requirements: { page: "\d+"}
 
 
 match:
@@ -67,8 +79,3 @@ match_user_switch:
 match_user_delete:
     pattern:  /match/{id}/user/{user}/delete
     defaults: { _controller: SmartkillWebBundle:MatchUser:delete }
-
-ranking:
-    pattern:  /ranking/{page}
-    defaults: { _controller: SmartkillWebBundle:User:ranking, page: 1 }
-    requirements: { page: "\d+"}
