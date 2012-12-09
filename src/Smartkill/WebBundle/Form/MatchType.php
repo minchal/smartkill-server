@@ -6,19 +6,43 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Symfony\Component\Validator\Constraints\DateTime;
+
 class MatchType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', 'text', array('label'=>'Nazwa:'))
-            ->add('dueDate', 'datetime', array('label'=>'Termin gry:', 'widget'=>'single_text'))
-            ->add('length', 'choice', array('label'=>'Czas trwania:', 'choices' => array('30'=>'30 min.','60'=>'1 godz.','120'=>'2 godz.','180'=>'3 godz.')))
-            ->add('size', 'choice', array('label'=>'Promień terytorium:', 'choices' => array('0.5'=>'0,5km','1'=>'1km','2'=>'2km','5'=>'5km')))
-            ->add('maxPlayers', 'integer', array('label'=>'Maks. liczba graczy:'))
-            ->add('password', 'password', array('label'=>'Hasło:', 'required'=>false))
-            ->add('lat', 'hidden', array('data'=>51.11))
-            ->add('lng', 'hidden', array('data'=>17.06))
+            ->add('name', 'text', array(
+            	'label'=>'Nazwa:'
+            ))
+            ->add('descr', 'textarea', array(
+            	'label'=>'Dodatkowy opis:',
+            	'required'=>false
+            ))
+            ->add('dueDate', 'datetime', array(
+            	'label'=>'Termin gry:', 
+            	'widget'=>'single_text', 
+            	'format'=>'yyyy-MM-dd\'T\'HH:mm', 
+            	'constraints' => new DateTimeRangeConstraint(array('min'=>new \DateTime()))
+            ))
+            ->add('length', 'choice', array(
+            	'label'=>'Czas trwania:', 
+            	'choices' => array('30'=>'30 min.','60'=>'1 godz.','120'=>'2 godz.','180'=>'3 godz.')
+            ))
+            ->add('size', 'choice', array(
+            	'label'=>'Promień terytorium:', 
+            	'choices' => array(500=>'0,5km',1000=>'1km',2000=>'2km',5000=>'5km')
+            ))
+            ->add('maxPlayers', 'integer', array(
+            	'label'=>'Maks. liczba graczy:'
+            ))
+            ->add('password', 'password', array(
+            	'label'=>'Hasło:',
+            	'required'=>false
+            ))
+            ->add('lat', 'hidden')
+            ->add('lng', 'hidden')
         ;
     }
 
@@ -31,6 +55,6 @@ class MatchType extends AbstractType
 
     public function getName()
     {
-        return 'smartkill_webbundle_matchtype';
+        return 'match';
     }
 }

@@ -1,10 +1,36 @@
 
-.form-tight {
-	width: 400px;
-}
-
 .map-canvas {
 	margin: 0 0 20px 0;
 	border: solid 1px #E2E2E2;
 	.box-shadow(1px 1px 2px #ddd);
+}
+
+.users {
+	.well();
+	.well-small();
+	.clearfix();
+	min-height: 105px;
+}
+
+.user {
+	float: left; width: 75px;
+	margin: 0 10px 0 0; padding: 3px;
+	text-align: center;
+	background: #fff;
+	.border-radius(5px);
+	.box-shadow(0 0 3px #999);
+	
+	&.ui-draggable-dragging {
+		
+	}
+	
+	a {
+		display: block;
+	}
+	
+	img {
+		display: block;
+		margin: 0 0 3px 0;
+		.border-radius(5px);
+	}
 }

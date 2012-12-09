@@ -9,6 +9,10 @@
 // Make all forms have space below them
 form {
   margin: 0 0 @baseLineHeight;
+  
+  .modal > & {
+    margin-bottom: 0;
+  }
 }
 
 fieldset {
@@ -97,7 +101,7 @@ textarea,
 }
 // Reset height since textareas have rows
 textarea {
-  height: auto;
+  height: auto; resize: vertical;
 }
 // Everything else
 textarea,

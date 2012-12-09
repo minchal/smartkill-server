@@ -1,9 +1,14 @@
 {% extends 'SmartkillWebBundle::layout.html.twig' %}
 
-{% block title %}SmartKill - Mecze{% endblock %}
+{% import 'SmartkillWebBundle:Form:question.html.twig' as question %}
+
+{% block title %}SmartKill - {{ entity.name }}{% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    <script src="{{ asset('js/jquery.form.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/jquery.ui.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/match.show.js') }}" type="text/javascript"></script>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?language=en&sensor=false"></script>
 {% endblock %}
 
@@ -12,48 +17,46 @@
 	<div class="block">
 		<ul class="nav nav-pills pull-right">
 			<li><a href="{{ path('match_edit', { 'id': entity.id }) }}"><i class="icon-pencil"></i> Edytuj</a></li>
-			<li><a href="{{ path('match_delete', { 'id': entity.id }) }}"><i class="icon-remove"></i> Usuń</a></li>
+			<li><a href="#deleteModal" data-toggle="modal"><i class="icon-remove"></i> Usuń</a></li>
 		</ul>
+		
+		<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+			{{ question.modal('Usuń mecz', 'Czy jesteś pewien, że chcesz usunąć mecz?', deleteForm, path('match_delete', { 'id': entity.id })) }}
+		</div>
 		
 		<h2>Mecz: {{ entity.name }} </h2>
 		
 		<div class="row-fluid">
 			<div class="span5">
-				<div id="map_canvas" class="map-canvas" style="height: 250px;"></div>
-				<script>
-					$(function(){
-						var center = new google.maps.LatLng({{ entity.lat }}, {{ entity.lng }}, true);
-						
-						var map = new google.maps.Map(document.getElementById('map_canvas'), {
-							mapTypeId: google.maps.MapTypeId.ROADMAP,
-							zoom: 10
-						});
-						
-						map.setCenter(center);
-						
-						var circle = new google.maps.Circle({
-							map: map,
-							center: center,
-							radius: {{ entity.size }} * 1000,
-							strokeWeight: 2
-						});
-					});
-				</script>
+				<div id="map" class="map-canvas" style="height: 250px;"
+					data-lat="{{ entity.lat }}" data-lng="{{ entity.lng }}" data-size="{{ entity.size }}"
+				></div>
 				
-				{% if joined == false %}
-			    	<form action="{{ path('match_join', { 'id': entity.id }) }}" method="post">
-			            <input type="password" name="pass" />
-			            <button type="submit">Dołącz</button>
+				{% if entity.descr %}
+					<p class="well well-small">{{ entity.descr|nl2br }}</p>
+				{% endif %}
+				
+				{% if joinForm %}
+			    	<form id="pass-form" data-pass="{{ entity.hasPassword }}" action="{{ path('match_join', { 'id': entity.id }) }}" method="post">
+			    		<div id="pass-error" class="alert alert-error hide">Hasło nieprawidłowe</div>
+			    		
+						<div id="pass-input" class="hide">
+			    			{{ form_row(joinForm.password,{attr:{class:'span12'}}) }}
+			    			{{ form_rest(joinForm) }}
+			    		</div>
+			    		
+			    		<div class="pull-center">
+							<button class="btn btn-primary btn-large" type="submit">Dołącz</button>
+						</div>
 			        </form>
 				{% endif %}
-				<a class="btn btn-primary btn-large btn-block">Dołącz</a>
 			</div>
 			<div class="span7">
 				<table class="table">
-					<colgroup span="1" width="150px" />
+					<colgroup width="150px" />
 					<tr>
 						<td><strong>Organizator:</strong></td>
-						<td></td>
+						<td><a href="{{ path('user', { username: entity.createdBy.username }) }}">{{ entity.createdBy.username }}</a></td>
 					</tr>
 					<tr>
 						<td><strong>Data rozpoczęcia:</strong></td>
@@ -65,7 +68,7 @@
 					</tr>
 					<tr>
 						<td><strong>Graczy:</strong></td>
-						<td>0 / {{ entity.maxPlayers }}</td>
+						<td>{{ entity.players.count }} / {{ entity.maxPlayers }}</td>
 					</tr>
 					<tr>
 						<td><strong>Lokalizacja:</strong></td>
@@ -73,23 +76,39 @@
 					</tr>
 				</table>
 				
-				<legend>Łowcy</legend>
-				<div class="well">
-					<div class="user">
-						<a href="#">
-							<img src="" alt="" />
-							NazwaUsera
+				<div class="alert alert-info">Przeciągaj użytkowników pomiędzy grupami, aby zmieniać ich rolę w meczu.</div>
+				
+				{% macro user(mu) %}
+					<div class="user" 
+						data-switch="{{ path('match_user_switch', { 'id': mu.match.id, 'user': mu.user.id }) }}"
+						data-delete="{{ path('match_user_delete', { 'id': mu.match.id, 'user': mu.user.id }) }}"
+					>
+						<a href="{{ path('user', { username: mu.user.username }) }}">
+							<img src="{{ mu.user.getAvatarUrl | imagine_filter('avatar_small') }}" alt="" />
+							{{ mu.user.username }}
 						</a>
 					</div>
+				{% endmacro %}
+				
+				<legend>Łowcy</legend>
+				<div class="users" id="hunters">
+					{% for mu in hunters %}
+						{{ _self.user(mu) }}
+					{% endfor %}
 				</div>
 				
 				<legend>Ofiary</legend>
-				<div class="well">
-					
+				<div class="users" id="preys">
+					{% for mu in preys %}
+						{{ _self.user(mu) }}
+					{% endfor %}
+				</div>
+				
+				<div class="alert alert-error alert-block hide" id="delete">
+					Upuść tutaj, aby usunąć gracza z meczu.
 				</div>
 			</div>
 		</div>
-		
 	</div>
 
 {% endblock %}

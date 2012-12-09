@@ -21,6 +21,19 @@ login_check:
 logout:
     pattern:  /logout
     
+profile:
+    pattern:  /profile/{id}
+    defaults: { _controller: SmartkillWebBundle:User:profile, id: null }
+    
+avatar:
+    pattern:  /avatar/{id}
+    defaults: { _controller: SmartkillWebBundle:User:avatar, id: null }
+
+user:
+    pattern:  /user/{username}
+    defaults: { _controller: SmartkillWebBundle:User:public }
+
+
 
 match:
     pattern:  /match/
@@ -46,6 +59,13 @@ match_join:
     pattern:  /match/{id}/join
     defaults: { _controller: SmartkillWebBundle:Match:join }
     
+match_user_switch:
+    pattern:  /match/{id}/user/{user}/switch
+    defaults: { _controller: SmartkillWebBundle:MatchUser:switch }
+    
+match_user_delete:
+    pattern:  /match/{id}/user/{user}/delete
+    defaults: { _controller: SmartkillWebBundle:MatchUser:delete }
 
 ranking:
     pattern:  /ranking/{page}

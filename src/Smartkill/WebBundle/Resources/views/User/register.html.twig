@@ -8,11 +8,15 @@
 	<div class="block">
 		<h2>Zarejestruj się</h2>
 		
-		<form action="{{ path('register')}}" method="post" {{ form_enctype(form) }} class="form-horizontal form-tight">
-			{{ form_widget(form) }}
-			
-			<button class="btn btn-primary btn-large pull-right" type="submit">Zarejestruj mnie!</button>
-		</form>
+		<div class="row-fluid">
+			<div class="span7">
+				<form action="{{ path('register')}}" method="post" {{ form_enctype(form) }} class="form-horizontal form-tight">
+					{{ form_widget(form) }}
+					
+					<button class="btn btn-primary btn-large pull-right" type="submit">Zarejestruj mnie!</button>
+				</form>
+			</div>
+		</div>
 	</div>
 
 {% endblock %}

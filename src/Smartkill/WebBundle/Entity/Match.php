@@ -23,23 +23,30 @@ class Match {
     /**
      * @ORM\Column(type="string", length=150)
      * @Assert\NotBlank()
+     * @Assert\Length(max=150)
      */
     private $name;
     
     /**
-     * @ORM\Column(type="string", length=128, nullable=true)
-     * @Assert\MaxLength(limit=20)
+     * @ORM\Column(type="string", length=1000, nullable=true)
+     * @Assert\Length(max=1000)
+     */
+    private $descr;
+    
+    /**
+     * @ORM\Column(type="string", length=30, nullable=true)
+     * @Assert\Length(max=30)
      */
     private $password;
     
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @ORM\Column(type="decimal", scale=6)
      * @Assert\NotBlank()
      */
     private $lat;
     
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @ORM\Column(type="decimal", scale=6)
      * @Assert\NotBlank()
      */
     private $lng;
@@ -47,13 +54,15 @@ class Match {
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank()
+     * @Assert\Range(min=500, max=5000)
      */
     private $size;
     
     /**
-    * @ORM\Column(type="integer")
-    * @Assert\NotBlank()
-    */
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
+     * @Assert\Range(min=30, max=180)
+     */
     private $length;
     
     /**
@@ -63,6 +72,8 @@ class Match {
     
     /**
      * @ORM\Column(type="integer", name="max_players")
+     * @Assert\NotBlank()
+     * @Assert\Range(min=2, max=20)
      */
     private $maxPlayers = 2;
     
@@ -72,12 +83,18 @@ class Match {
     private $createdAt;
     
     /**
-     * @ORM\ManyToOne(targetEntity="Smartkill\WebBundle\Entity\User", inversedBy="matches")
+     * @ORM\ManyToOne(targetEntity="Smartkill\WebBundle\Entity\User", inversedBy="createdMatches")
      * @ORM\JoinColumn(name="created_by", referencedColumnName="id")
      * @Accessor(getter="getCreatedById")
      */
     private $createdBy;
 	
+    /**
+     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\MatchUser", mappedBy="match")
+     */
+    private $players;
+    
+    
 	public function __construct() {
         $this->dueDate = new \DateTime();
     }
@@ -137,7 +154,11 @@ class Match {
     {
         return $this->password;
     }
-
+	
+	public function hasPassword() {
+		return (boolean) $this->password;
+	}
+	
     /**
      * Set lat
      *
@@ -282,6 +303,10 @@ class Match {
     {
         return $this->maxPlayers;
     }
+    
+    public function isFull() {
+		return $this->getPlayers()->count() >= $this->getMaxPlayers();
+	}
 
     /**
      * Set createdAt
@@ -332,5 +357,84 @@ class Match {
     public function getCreatedById()
     {
     	return $this->getCreatedBy() ? $this->getCreatedBy()->getId() : null;
+    }
+
+    /**
+     * Add players
+     *
+     * @param \Smartkill\WebBundle\Entity\MatchUser $players
+     * @return Match
+     */
+    public function addPlayer(\Smartkill\WebBundle\Entity\MatchUser $players)
+    {
+        $this->players[] = $players;
+    
+        return $this;
+    }
+
+    /**
+     * Remove players
+     *
+     * @param \Smartkill\WebBundle\Entity\MatchUser $players
+     */
+    public function removePlayer(\Smartkill\WebBundle\Entity\MatchUser $players)
+    {
+        $this->players->removeElement($players);
+    }
+
+    /**
+     * Get players
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPlayers()
+    {
+        return $this->players;
+    }
+
+    /**
+     * Set desc
+     *
+     * @param string $desc
+     * @return Match
+     */
+    public function setDesc($desc)
+    {
+        $this->desc = $desc;
+    
+        return $this;
+    }
+
+    /**
+     * Get desc
+     *
+     * @return string 
+     */
+    public function getDesc()
+    {
+        return $this->desc;
+    }
+
+    /**
+     * Set descr
+     *
+     * @param string $descr
+     * @return Match
+     */
+    public function setDescr($descr)
+    {
+        $this->descr = $descr;
+    
+        return $this;
+    }
+
+    /**
+     * Get descr
+     *
+     * @return string 
+     */
+    public function getDescr()
+    {
+        return $this->descr;
     }
 }

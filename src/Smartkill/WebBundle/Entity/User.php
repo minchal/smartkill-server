@@ -3,10 +3,12 @@
 namespace Smartkill\WebBundle\Entity;
 
 use Smartkill\APIBundle\Entity\Session;
-use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -28,6 +30,7 @@ class User implements UserInterface {
     /**
      * @ORM\Column(type="string", unique=true, length=100)
      * @Assert\NotBlank()
+     * @Assert\Regex(pattern="/^[-_a-zA-Z0-9]+$/", message="Pole może zawierać tylko litery, cyfry, '_' oraz '-'!")
      */
     private $username;
     
@@ -38,10 +41,11 @@ class User implements UserInterface {
     
     /**
      * @ORM\Column(type="string", length=128)
-     * @Assert\NotBlank()
      * @Assert\MinLength(limit=5)
      */
     private $password;
+    
+    public $oldPassword;
     
     /**
      * @ORM\Column(type="string", unique=true, length=100)
@@ -64,6 +68,11 @@ class User implements UserInterface {
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $avatar;
+    
+    /**
+     * @Assert\Image(maxSize="500k")
+     */
+    public $avatarFile;
     
     /**
      * @ORM\Column(name="registered_at", type="datetime")
@@ -98,7 +107,12 @@ class User implements UserInterface {
     /**
      * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\Match", mappedBy="createdBy")
      */
-    protected $matches;
+    protected $createdMatches;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\MatchUser", mappedBy="user")
+     */
+    protected $playedMatches;
 	
 	public function __construct()
     {
@@ -268,7 +282,40 @@ class User implements UserInterface {
     {
         return $this->avatar;
     }
-
+    
+    public function getAvatarUrl()  {
+        return $this->getUploadDir() . ($this->avatar ? $this->avatar : 'default.png');
+    }
+    
+    public function getAvatarPath() {
+        return $this->getUploadRootDir() . ($this->avatar ? $this->avatar : 'default.png');
+    }
+	
+    protected function getUploadRootDir() {
+        return '.'.$this->getUploadDir();
+    }
+	
+    protected function getUploadDir() {
+        return '/media/avatar/';
+    }
+    
+    public function uploadAvatar() {
+		if ($this->avatarFile == null) {
+			return;
+		}
+		
+		$filename = $this->username.'.'.$this->avatarFile->guessExtension();
+        
+		$this->avatarFile->move(
+			$this->getUploadRootDir(),
+			$filename
+		);
+		
+		$this->avatar = $filename;
+		
+		$this->avatarFile = null;
+	}
+	
     /**
      * Set registeredAt
      *
@@ -494,5 +541,71 @@ class User implements UserInterface {
     public function getPointsHunter()
     {
         return $this->pointsHunter;
+    }
+
+    /**
+     * Add createdMatches
+     *
+     * @param \Smartkill\WebBundle\Entity\Match $createdMatches
+     * @return User
+     */
+    public function addCreatedMatche(\Smartkill\WebBundle\Entity\Match $createdMatches)
+    {
+        $this->createdMatches[] = $createdMatches;
+    
+        return $this;
+    }
+
+    /**
+     * Remove createdMatches
+     *
+     * @param \Smartkill\WebBundle\Entity\Match $createdMatches
+     */
+    public function removeCreatedMatche(\Smartkill\WebBundle\Entity\Match $createdMatches)
+    {
+        $this->createdMatches->removeElement($createdMatches);
+    }
+
+    /**
+     * Get createdMatches
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCreatedMatches()
+    {
+        return $this->createdMatches;
+    }
+
+    /**
+     * Add playedMatches
+     *
+     * @param \Smartkill\WebBundle\Entity\MatchUser $playedMatches
+     * @return User
+     */
+    public function addPlayedMatche(\Smartkill\WebBundle\Entity\MatchUser $playedMatches)
+    {
+        $this->playedMatches[] = $playedMatches;
+    
+        return $this;
+    }
+
+    /**
+     * Remove playedMatches
+     *
+     * @param \Smartkill\WebBundle\Entity\MatchUser $playedMatches
+     */
+    public function removePlayedMatche(\Smartkill\WebBundle\Entity\MatchUser $playedMatches)
+    {
+        $this->playedMatches->removeElement($playedMatches);
+    }
+
+    /**
+     * Get playedMatches
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPlayedMatches()
+    {
+        return $this->playedMatches;
     }
 }

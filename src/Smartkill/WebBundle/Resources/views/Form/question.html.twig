@@ -1,0 +1,43 @@
+{% extends 'SmartkillWebBundle::layout.html.twig' %}
+
+{% block title %}SmartKill - {{ title }}{% endblock %}
+
+{% block content %}
+
+	<div class="block">
+		<div class="span6" style="float: none; margin: 0 auto;">
+			<div class="alert alert-block clearfix">
+				<h4>{{ title }}</h4>
+				{{ question }}
+			</div>
+			<form action="{{ app.request.getRequestUri }}" method="post" class="pull-right">
+				<button class="btn btn-large" type="submit">Nie</button>
+				<button class="btn btn-primary btn-large" type="submit" name="yes">Tak</button>
+				
+				{{ form_rest(form) }}
+			</form>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% macro modal(title, question, form, action) %}
+
+	<form action="{{ action }}" method="post">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3>{{ title }}</h3>
+		</div>
+		<div class="modal-body">
+			<div class="alert alert-block clearfix">
+				{{ question }}
+			</div>
+			{{ form_widget(form) }}
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-large" data-dismiss="modal" >Nie</button>
+			<button class="btn btn-primary btn-large" type="submit" name="yes">Tak</button>
+		</div>
+	</form>
+	
+{% endmacro %}

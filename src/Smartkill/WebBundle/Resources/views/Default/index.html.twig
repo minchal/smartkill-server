@@ -6,17 +6,14 @@
 
 {% block content %}
 
-<div class="row">
+<div class="row-fluid">
 	<div class="span6">
 		<div class="block">
 			<h2>SmartKill</h2>
 			
-			<p>Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, 
+			<p class="lead">Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, 
 			non felis. Maecenas malesuada elit lectus felis, malesuada ultricies. Curabitur et 
-			ligula. Ut molestie a, ultricies porta urna. Vestibulum commodo volutpat a, convallis 
-			ac, laoreet enim. Phasellus fermentum in, dolor. Pellentesque facilisis. 
-			Nulla imperdiet sit amet magna. Vestibulum dapibus, mauris nec malesuada 
-			fames ac turpis velit, rhoncus eu, luctus et interdum adipiscing wisi.</p>
+			ligula. Ut molestie a, ultricies porta urna.</p>
 			
 			<p>Aliquam erat ac ipsum. Integer aliquam purus. Quisque lorem tortor fringilla 
 			sed, vestibulum id, eleifend justo vel bibendum sapien massa ac turpis 
@@ -32,7 +29,7 @@
 				
 				<h2>Zarejestruj się</h2>
 				
-				<form action="{{ path('register')}}" method="post" {{ form_enctype(form) }} class="form-horizontal form-tight">
+				<form action="{{ path('register')}}" method="post" {{ form_enctype(form) }} class="form-horizontal">
 					{{ form_widget(form) }}
 					
 					<button class="btn btn-primary btn-large pull-right" type="submit">Zarejestruj mnie!</button>

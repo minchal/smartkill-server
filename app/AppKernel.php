@@ -23,6 +23,7 @@ class AppKernel extends Kernel
         	new Ivory\GoogleMapBundle\IvoryGoogleMapBundle(),
             new Smartkill\WebBundle\SmartkillWebBundle(),
             new Smartkill\APIBundle\SmartkillAPIBundle(),
+            new Liip\ImagineBundle\LiipImagineBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

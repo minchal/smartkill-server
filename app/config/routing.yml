@@ -5,3 +5,7 @@ smartkill_api:
 smartkill_web:
     resource: "@SmartkillWebBundle/Resources/config/routing.yml"
     prefix:   /
+    
+_imagine:
+    resource: .
+    type:     imagine

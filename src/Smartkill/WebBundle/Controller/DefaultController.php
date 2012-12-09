@@ -5,7 +5,7 @@ namespace Smartkill\WebBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Smartkill\WebBundle\Entity\User;
-use Smartkill\WebBundle\Form\Type\RegistrationType;
+use Smartkill\WebBundle\Form\RegistrationType;
 
 class DefaultController extends Controller {
 	

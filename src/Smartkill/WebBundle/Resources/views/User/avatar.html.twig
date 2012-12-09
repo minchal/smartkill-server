@@ -1,0 +1,29 @@
+{% extends 'SmartkillWebBundle::layout.html.twig' %}
+{% form_theme form 'SmartkillWebBundle:Form:horizontal.html.twig' %}
+
+{% block title %}SmartKill - Zmień awatar{% endblock %}
+
+{% block content %}
+
+	<div class="block">
+		<div class="row-fluid">
+			<div class="span7">
+				<h2>Zmień awatar</h2>
+				
+				<form action="{{ app.request.getRequestUri }}" method="post" {{ form_enctype(form) }} class="form-horizontal">
+					{{ form_row(form.avatarFile) }}
+					{{ form_rest(form) }}
+					<button class="btn btn-primary btn-large pull-right" type="submit">Zapisz</button>
+				</form>
+			</div>
+			<div class="span1"></div>
+			<div class="span4">
+				<legend>Obecny</legend>
+				<div class="thumbnail">
+					<img src="{{ entity.getAvatarUrl | imagine_filter('avatar_large') }}" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

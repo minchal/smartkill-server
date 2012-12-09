@@ -19,7 +19,8 @@
         "jms/security-extra-bundle": "1.2.*",
         "jms/di-extra-bundle": "1.1.*",
         "jms/serializer-bundle": "0.9.*",
-        "egeloen/google-map-bundle": "1.0.*"
+        "egeloen/google-map-bundle": "1.0.*",
+        "liip/imagine-bundle": "*"
     },
     "scripts": {
         "post-install-cmd": [

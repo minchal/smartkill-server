@@ -16,13 +16,15 @@ class MatchUser {
 	
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer", name="user_id")
+     * @ORM\ManyToOne(targetEntity="Smartkill\WebBundle\Entity\User", inversedBy="playedMatches")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     protected $user;
     
-    /**
+     /**
      * @ORM\Id
-     * @ORM\Column(type="integer", name="match_id")
+     * @ORM\ManyToOne(targetEntity="Smartkill\WebBundle\Entity\Match", inversedBy="players")
+     * @ORM\JoinColumn(name="match_id", referencedColumnName="id")
      */
     private $match;
     
@@ -210,7 +212,7 @@ class MatchUser {
     /**
      * Get user
      *
-     * @return integer 
+     * @return User
      */
     public function getUser()
     {

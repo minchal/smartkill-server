@@ -20,8 +20,10 @@
 		<div class="control-label">
 			{{ form_label(form) }}
 		</div>
-		<div class="controls">
-			{{ form_widget(form) }}
+		<div class="controls controls-row">
+			{% set attr = attr|merge({'class': attr.class|default('span12')}) %}
+			
+			{{ form_widget(form, {'attr': attr}) }}
 			{{ form_errors(form) }}
 		</div>
 	</div>

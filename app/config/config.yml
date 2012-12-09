@@ -59,3 +59,20 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
+
+liip_imagine:
+    cache_base_path: %imagine_base_path%
+    
+    filter_sets:
+        avatar_large:
+            quality: 90
+            filters:
+                thumbnail: { size: [275, 275], mode: outbound }
+        avatar_medium:
+            quality: 90
+            filters:
+                thumbnail: { size: [125, 125], mode: outbound }
+        avatar_small:
+            quality: 90
+            filters:
+                thumbnail: { size: [75, 75], mode: outbound }

@@ -1,0 +1,28 @@
+{% extends 'SmartkillWebBundle::layout.html.twig' %}
+
+{% block title %}SmartKill - {{ entity.username }}{% endblock %}
+
+{% block content %}
+
+	<div class="block">
+		<h2>Użytkownik: {{ entity.username }}</h2>
+		
+		<div class="row-fluid">
+			<div class="span4">
+				<div class="thumbnail">
+					<img src="{{ entity.getAvatarUrl | imagine_filter('avatar_large') }}" />
+				</div>
+			</div>
+			<div class="span8">
+				<table class="table">
+					<colgroup width="150px" />
+					<tr>
+						<td><strong>Adres e-mail:</strong></td>
+						<td><a href="mailto:{{ entity.email }}">{{ entity.email }}</a></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

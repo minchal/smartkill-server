@@ -22,8 +22,8 @@
 				<div class="nav-collapse collapse">
 					{% if app.user %}
 						<p class="navbar-text pull-right">
-							Witaj <strong><a href="#" class="navbar-link">{{ app.user.username }}</a></strong> |
-							<a href="{{ path('logout') }}" class="navbar-link">Profil</a> |
+							Witaj <strong><a href="{{ path('user', {username: app.user.username}) }}" class="navbar-link">{{ app.user.username }}</a></strong> |
+							<a href="{{ path('profile') }}" class="navbar-link">Profil</a> |
 							<a href="{{ path('logout') }}" class="navbar-link">Wyloguj</a>
 						</p>
 					{% else %}
@@ -48,7 +48,7 @@
     
 	<section id="container" class="container">
 		<div id="top" class="{% block top %}{% endblock %}">
-			<a href="{{ path('index') }}"><img src="{{ asset('style/logo.png') }} " alt="" /></a>
+			<a href="{{ path('index') }}"><img src="{{ asset('style/logo.png') }}" alt="" /></a>
 			
 			<h1>
 				<a href="#">SmartKill</a><br />
@@ -56,7 +56,7 @@
 			</h1>
 		</div>
 		
-		{% for flashMessage in app.session.flashbag.get('notice') %}
+		{% for flashMessage in app.session.flashbag.get('error') %}
 			<div class="alert alert-error fade in">
 				<a class="close" data-dismiss="alert" href="#">&times;</a>
 				{{ flashMessage }}
