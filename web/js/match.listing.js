@@ -1,5 +1,7 @@
 $(function(){
-	$('#mapModal').modal({
+	$modal = $('#mapModal');
+	
+	$modal.modal({
 		show: false
 	});
 
@@ -9,12 +11,14 @@ $(function(){
 		var lng = $this.data('lng');
 		var rad = $this.data('radius');
 		
-		$('#mapModal').modal('show');
+		$modal.modal('show');
 		
-		$('#mapModal').on('shown', function () {
+		$('#mapModalDesc').html($this.parents('tr').find('td:first-child').html());
+		
+		$modal.on('shown', function () {
 			var center = new google.maps.LatLng(lat, lng, true);
 			
-			var map = new google.maps.Map(document.getElementById("map_canvas"), {
+			var map = new google.maps.Map(document.getElementById("map"), {
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
 				zoom: 11
 			});

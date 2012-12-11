@@ -2,9 +2,13 @@ index:
     pattern:  /
     defaults: { _controller: SmartkillWebBundle:Default:index }
 
-contact:
+static_contact:
     pattern:  /contact
-    defaults: { _controller: SmartkillWebBundle:Default:contact }
+    defaults: { _controller: SmartkillWebBundle:Default:static, template: contact }
+    
+static_rules:
+    pattern:  /rules
+    defaults: { _controller: SmartkillWebBundle:Default:static, template: rules }
     
 register:
     pattern:  /register

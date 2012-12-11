@@ -30,9 +30,27 @@
 						{% endif %}
 						
 						{{ form_row(form.password) }}
-						
-						<button class="btn btn-primary btn-large pull-right" type="submit">Zapisz</button>
 					</fieldset>
+					<fieldset>
+						<legend>Paczki</legend>
+						
+						{{ form_row(form.density) }}
+						
+						<div class="alert alert-info">Wybierz typy paczek, które mają być dostępne w czasie gry.</div>
+						
+						{{ form_widget(form.pkgTime, {inline:true}) }}
+						{{ form_widget(form.pkgShield, {inline:true}) }}
+						{{ form_widget(form.pkgSnipe, {inline:true}) }}
+						{{ form_widget(form.pkgSwitch, {inline:true}) }}
+					</fieldset>
+					<br />
+					<div class="pull-right">
+						{% if isEditForm %}
+							<a href="{{ path('match_show',{id:entity.id}) }}">Anuluj</a>
+							<span class="muted">lub</span>
+						{% endif %}
+						<button class="btn btn-primary btn-large" type="submit">Zapisz</button>
+					</div>
 				</div>
 				<div class="span5">
 					<fieldset>

@@ -14,7 +14,7 @@ class UserType extends AbstractType {
 		$builder
 			->add('username', 'text', array('label'=>'Login:'))
 			->add('email', 'email', array('label'=>'E-mail:'))
-			->add('admin', null, array('label'=>'Admin?','required'=>false))
+			->add('admin', 'checkbox', array('label'=>'Uprawnienia administratora','required'=>false))
 			->add('password', 'repeated', array(
 				'required'=> false,
 				'invalid_message' => 'Podane hasła muszą być takie same.',

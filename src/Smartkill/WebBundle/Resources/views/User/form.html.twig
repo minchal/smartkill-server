@@ -25,7 +25,11 @@
 						{{ form_widget(form) }}
 					</fieldset>
 					
-					<button class="btn btn-primary btn-large pull-right" type="submit">Zapisz</button>
+					<div class="pull-right">
+						<a href="{{ path('user',{username:entity.username}) }}">Anuluj</a>
+						<span class="muted">lub</span>
+						<button class="btn btn-primary btn-large" type="submit">Zapisz</button>
+					</div>
 				</form>
 			</div>
 		</div>

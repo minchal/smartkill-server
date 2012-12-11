@@ -44,12 +44,24 @@ body {
 }
 
 #footer {
-	margin: 20px;
+	margin: 0 20px 20px;
 	text-shadow: 1px 1px 0 #fff;
+	
+	ul {
+		float: right; margin-right: -5px;
+		display: inline;
+		
+		li {
+			display: inline;
+			padding: 0 5px;
+			
+			a {color: lighten(@textColor, 10%);}
+		}
+	}
 }
 
 .block {
-	padding: 20px;
+	padding: 20px; margin: 0 0 20px 0;
 	background: #fff;
 	border: solid 1px #E2E2E2;
 	.box-shadow(1px 1px 2px #ddd);

@@ -41,6 +41,16 @@ class MatchType extends AbstractType
             	'label'=>'Hasło:',
             	'required'=>false
             ))
+            
+            ->add('density', 'choice', array(
+            	'label'=>'Ilość paczek:', 
+            	'choices' => array(0=>'Bez paczek',5=>'Mało (5/km²)',10=>'Średnio (10/km²)',20=>'Dużo (20/km²)',50=>'OMFG! One są wszędzie! (50/km²)')
+            ))
+            ->add('pkgTime',   'checkbox', array('required'=>false, 'label'=>'Czasówki'))
+            ->add('pkgShield', 'checkbox', array('required'=>false, 'label'=>'Tarcze'))
+            ->add('pkgSnipe',  'checkbox', array('required'=>false, 'label'=>'Lunety'))
+            ->add('pkgSwitch', 'checkbox', array('required'=>false, 'label'=>'Zmiana ról'))
+            
             ->add('lat', 'hidden')
             ->add('lng', 'hidden')
         ;

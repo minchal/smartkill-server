@@ -20,7 +20,7 @@ class DefaultController extends Controller {
         return $this->render('SmartkillWebBundle:Default:index.html.twig', $vars);
     }
     
-    public function contactAction() {
-        return $this->render('SmartkillWebBundle:Default:contact.html.twig');
+    public function staticAction($template) {
+        return $this->render('SmartkillWebBundle:Default:'.$template.'.html.twig');
     }
 }

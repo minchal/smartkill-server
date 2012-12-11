@@ -7,11 +7,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 use JMS\SerializerBundle\Annotation\Accessor;
 
 /**
+ * Uwaga: ta tabela wyjątkowo nazywa się "matches" bo "match" to słowo kluczowe MYSQL!!!
+ * 
  * @ORM\Entity
  * @ORM\Table(name="matches")
  * @ORM\Entity(repositoryClass="Smartkill\WebBundle\Entity\MatchRepository")
  */
 class Match {
+	
+	const PLANED   = 'planed';
+	const GOINGON  = 'goingon';
+	const FINISHED = 'finished';
 	
     /**
      * @ORM\Id
@@ -94,10 +100,79 @@ class Match {
      */
     private $players;
     
+    /**
+     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\Event", mappedBy="match", cascade="remove")
+     */
+    private $events;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\Package", mappedBy="match", cascade="remove")
+     */
+    private $packages;
+    
+    /**
+     * Ilość paczek na km2
+     * 
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
+     */
+    private $density = 10;
+    
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $pkgTime = true;
+    
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $pkgShield = true;
+    
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $pkgSnipe = true;
+    
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $pkgSwitch = true;
+    
     
 	public function __construct() {
         $this->dueDate = new \DateTime();
     }
+    
+    public function getLengthDesc()
+    {
+		$h = floor($this->length / 60);
+		$m = $this->length % 60;
+        return $h.':'.($m<10?'0':'').$m;
+    }
+    
+    public function isFull() {
+		return $this->getPlayers()->count() >= $this->getMaxPlayers();
+	}
+    
+    public function getCreatedById()
+    {
+    	return $this->getCreatedBy() ? $this->getCreatedBy()->getId() : null;
+    }
+    
+    public function getStatus()
+    {
+		// @TODO
+    	return self::PLANED;
+    }
+    
+    /**
+     * Powierzchnia obszaru gry w km2.
+     * 
+     * @return number
+     */
+    public function getArea() {
+		return pow($this->getSize()/1000,2)*pi();
+	}
     
     /**
      * Get id
@@ -250,13 +325,6 @@ class Match {
     {
         return $this->length;
     }
-    
-    public function getLengthDesc()
-    {
-		$h = floor($this->length / 60);
-		$m = $this->length % 60;
-        return $h.':'.($m<10?'0':'').$m;
-    }
 
     /**
      * Set dueDate
@@ -303,10 +371,6 @@ class Match {
     {
         return $this->maxPlayers;
     }
-    
-    public function isFull() {
-		return $this->getPlayers()->count() >= $this->getMaxPlayers();
-	}
 
     /**
      * Set createdAt
@@ -353,11 +417,6 @@ class Match {
     {
         return $this->createdBy;
     }
-    
-    public function getCreatedById()
-    {
-    	return $this->getCreatedBy() ? $this->getCreatedBy()->getId() : null;
-    }
 
     /**
      * Add players
@@ -393,29 +452,6 @@ class Match {
     }
 
     /**
-     * Set desc
-     *
-     * @param string $desc
-     * @return Match
-     */
-    public function setDesc($desc)
-    {
-        $this->desc = $desc;
-    
-        return $this;
-    }
-
-    /**
-     * Get desc
-     *
-     * @return string 
-     */
-    public function getDesc()
-    {
-        return $this->desc;
-    }
-
-    /**
      * Set descr
      *
      * @param string $descr
@@ -436,5 +472,186 @@ class Match {
     public function getDescr()
     {
         return $this->descr;
+    }
+
+    /**
+     * Add events
+     *
+     * @param \Smartkill\WebBundle\Entity\Event $events
+     * @return Match
+     */
+    public function addEvent(\Smartkill\WebBundle\Entity\Event $events)
+    {
+        $this->events[] = $events;
+    
+        return $this;
+    }
+
+    /**
+     * Remove events
+     *
+     * @param \Smartkill\WebBundle\Entity\Event $events
+     */
+    public function removeEvent(\Smartkill\WebBundle\Entity\Event $events)
+    {
+        $this->events->removeElement($events);
+    }
+
+    /**
+     * Get events
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getEvents()
+    {
+        return $this->events;
+    }
+
+    /**
+     * Add packages
+     *
+     * @param \Smartkill\WebBundle\Entity\Package $packages
+     * @return Match
+     */
+    public function addPackage(\Smartkill\WebBundle\Entity\Package $packages)
+    {
+        $this->packages[] = $packages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove packages
+     *
+     * @param \Smartkill\WebBundle\Entity\Package $packages
+     */
+    public function removePackage(\Smartkill\WebBundle\Entity\Package $packages)
+    {
+        $this->packages->removeElement($packages);
+    }
+
+    /**
+     * Get packages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPackages()
+    {
+        return $this->packages;
+    }
+
+    /**
+     * Set density
+     *
+     * @param float $density
+     * @return Match
+     */
+    public function setDensity($density)
+    {
+        $this->density = $density;
+    
+        return $this;
+    }
+
+    /**
+     * Get density
+     *
+     * @return float 
+     */
+    public function getDensity()
+    {
+        return $this->density;
+    }
+
+    /**
+     * Set pkgTime
+     *
+     * @param boolean $pkgTime
+     * @return Match
+     */
+    public function setPkgTime($pkgTime)
+    {
+        $this->pkgTime = $pkgTime;
+    
+        return $this;
+    }
+
+    /**
+     * Get pkgTime
+     *
+     * @return boolean 
+     */
+    public function getPkgTime()
+    {
+        return $this->pkgTime;
+    }
+
+    /**
+     * Set pkgShield
+     *
+     * @param boolean $pkgShield
+     * @return Match
+     */
+    public function setPkgShield($pkgShield)
+    {
+        $this->pkgShield = $pkgShield;
+    
+        return $this;
+    }
+
+    /**
+     * Get pkgShield
+     *
+     * @return boolean 
+     */
+    public function getPkgShield()
+    {
+        return $this->pkgShield;
+    }
+
+    /**
+     * Set pkgSnipe
+     *
+     * @param boolean $pkgSnipe
+     * @return Match
+     */
+    public function setPkgSnipe($pkgSnipe)
+    {
+        $this->pkgSnipe = $pkgSnipe;
+    
+        return $this;
+    }
+
+    /**
+     * Get pkgSnipe
+     *
+     * @return boolean 
+     */
+    public function getPkgSnipe()
+    {
+        return $this->pkgSnipe;
+    }
+
+    /**
+     * Set pkgSwitch
+     *
+     * @param boolean $pkgSwitch
+     * @return Match
+     */
+    public function setPkgSwitch($pkgSwitch)
+    {
+        $this->pkgSwitch = $pkgSwitch;
+    
+        return $this;
+    }
+
+    /**
+     * Get pkgSwitch
+     *
+     * @return boolean 
+     */
+    public function getPkgSwitch()
+    {
+        return $this->pkgSwitch;
     }
 }

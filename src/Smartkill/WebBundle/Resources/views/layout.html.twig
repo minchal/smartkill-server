@@ -37,10 +37,9 @@
 					
 					<ul class="nav">
 						{% set r = app.request.get('_route') %}
-						<li{% if r=='index'   %} class="active"{% endif %}><a href="{{ path('index') }}">Home</a></li>
+						<li{% if r=='index'   %} class="active"{% endif %}><a href="{{ path('index') }}">Strona główna</a></li>
 						<li{% if r=='match'   %} class="active"{% endif %}><a href="{{ path('match') }}">Mecze</a></li>
 						<li{% if r=='ranking' %} class="active"{% endif %}><a href="{{ path('ranking') }}">Ranking</a></li>
-						<li{% if r=='contact' %} class="active"{% endif %}><a href="{{ path('contact') }}">Kontakt</a></li>
 					</ul>
 				</div>
 			</div>
@@ -76,7 +75,11 @@
 		{% endblock %}
 		
 		<footer id="footer">
-			&copy; SmartKill 2012
+			<ul>
+				<li><a href="{{ path('static_rules') }}">Reguły gry</a></li>
+				<li><a href="{{ path('static_contact') }}">Kontakt</a></li>
+			</ul>
+			© SmartKill 2012
 		</footer>
 	</section>
 </body>

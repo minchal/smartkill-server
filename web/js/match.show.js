@@ -1,21 +1,4 @@
 $(function(){
-	// mapa
-	var $map   = $('#map');
-	var center = new google.maps.LatLng($map.data('lat'), $map.data('lng'), true);
-	var map    = new google.maps.Map(document.getElementById('map'), {
-		mapTypeId: google.maps.MapTypeId.ROADMAP,
-		zoom: 11
-	});
-	
-	map.setCenter(center);
-	
-	var circle = new google.maps.Circle({
-		map: map,
-		center: center,
-		radius: $map.data('size'),
-		strokeWeight: 1
-	});
-	
 	// formualrz z hasłem
 	$form  = $('#pass-form');
 	$input = $('#pass-input');
@@ -80,4 +63,60 @@ $(function(){
 			});
 		}
 	});
+	
+	// mapy
+	var $map = $('#map');
+	var $modal = $('#mapModal');
+	
+	function showCircleMap(id, lat, lng, radius) {
+		var center = new google.maps.LatLng(lat, lng, true);
+		var map    = new google.maps.Map(document.getElementById(id), {
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			zoom: 11
+		});
+		
+		map.setCenter(center);
+		
+		var circle = new google.maps.Circle({
+			map: map,
+			center: center,
+			radius: radius,
+			strokeWeight: 1
+		});
+		
+		return map;
+	}
+	
+	try {
+		// mapa obszaru
+		showCircleMap('map', $map.data('lat'), $map.data('lng'), $map.data('size'));
+		
+		// mapa zdarzenia
+		$modal.modal({
+			show: false
+		});
+		
+		$('.mapModalBtn').click(function(){
+			var $this = $(this);
+			
+			$modal.modal('show');
+			
+			$('#mapModalDesc').html($this.parents('tr').find('td:first-child').html());
+			
+			$modal.on('shown', function () {
+				var map = showCircleMap('map_event', $map.data('lat'), $map.data('lng'), $map.data('size'));
+				
+				var point = new google.maps.LatLng($this.data('lat'), $this.data('lng'), true);
+				
+				var marker = new google.maps.Marker({
+					position: point, 
+					map: map
+				});
+				
+				map.setCenter(point);
+			});
+		});
+	} catch (e) {
+		console.log(e);
+	}
 });

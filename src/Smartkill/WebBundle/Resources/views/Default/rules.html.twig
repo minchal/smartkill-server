@@ -1,0 +1,53 @@
+{% extends 'SmartkillWebBundle::layout.html.twig' %}
+
+{% block title %}SmartKill - Reguły gry{% endblock %}
+
+{% block content %}
+
+<div class="block">
+	<h2>Reguły gry <small>βeta</small></h2>
+	
+	<p class="muted">
+		Ostatnia aktualizacja:
+		<time datetime="2012-12-11T01:32:00+01:00">11.12.2012</time>
+	</p>
+	
+	<ol>
+		<li>Do gry wymagane jest konto użytkownika założone na stronie.</li>
+		<li>Gra toczy się na obszarze ogólnodostępnym, w kształcie koła o promieniu ustalonym przez gracza tworzącego mecz przed rozpoczęciem rozgrywek, lecz promień nie może być mniejszy niż 500m.</li>
+		<li>W grze musi wziąć udział przynajmniej dwóch graczy.</li>
+		<li>Graczy dzieli się na „Łowców” oraz „Ofiary”.</li>
+		<li>Przeciwnikiem „Łowcy” jest „Ofiara” i odwrotnie.</li>
+		<li>„Łowca” ma za zadanie dotrzeć do „Ofiary” przed upływem regulaminowego czasu gry, który ustalany jest przed rozgrywką oraz przed innymi „Łowcami”.</li>
+		<li>„Ofiara” zwycięża, jeśli przed upływem regulaminowego czasu gry, który ustalany jest przed rozgrywką nie zostanie odnaleziona przez żadnego „Łowcę”.</li>
+		<li>„Ofiara” zostaje uznana za złapaną w momencie, gdy „Łowca” znajduje się w odległości kontaktowej.</li>
+		<li>Pozycja graczy ustalana jest na podstawie danych GPS uzyskiwanych dzięki aplikacji zainstalowanej na telefonie z systemem Android, która również jest wymagana, aby wziąć udział w grze.</li>
+		<li>Gracz otrzymuje informacje o położeniu wszystkich przeciwników w odpowiednich interwałach czasowych uzależnionych od odległości najbliższego przeciwnika:
+			<ul>
+				<li>powyżej 2km – informacja co 2 minuty,</li>
+				<li>1km – informacja co 45 sekund,</li>
+				<li>500m – informacja co 15 sekund,</li>
+				<li>100m – informacja co 3 sekundy,</li>
+				<li>poniżej 100m – informacja co sekundę.</li>
+			</ul>
+		</li>
+		<li>Gracz zostaje zdyskwalifikowany w sytuacji, gdy w czasie trwania rozgrywki przez 3 minuty niemożliwe jest uzyskanie danych o jego pozycji.</li>
+		<li>W szczególności, kiedy do końca rozgrywki pozostało mniej niż 15 minut gry, gracz zostaje zdyskwalifikowany, gdy przez 1 minutę niemożliwe jest uzyskanie danych o jego pozycji.</li>
+		<li>W momencie, kiedy „Łowca” znajduje się w odległości od „Ofiary” mniejszej aniżeli 500m, „Ofiara” może zostać zdyskwalifikowana, gdy przez 0,5 minuty niemożliwe jest uzyskanie danych o jego pozycji. Wyjątek stanowi jedynie sytuacja, kiedy połączenie zostanie zerwane zarówno z „Ofiarą” jak i „Łowcą” znajdującym się w odległości mniejszej niż 500m.</li>
+		<li>Opuszczenie pola gry na okres dłuższy niż 1 minutę skutkuje dyskwalifikacją.</li>
+		<li>Popełnienie przez gracza 3 wykroczeń w czasie jednej rozgrywki skutkuje dyskwalifikacją.</li>
+		<li>Na polu rozgrywki, w losowo określonych punktach, mogą pojawiać się wirtualne paczki, które mogą zawierać pewne artefakty:
+			<ul>
+				<li>„Czasówka” – paczka znaleziona przez któregoś z „Łowców” powoduje wydłużenie czasy gry o 5, 10 lub 15 minut, w zależności od wielkości paczki, natomiast w przypadku odnalezienia jej przez „Ofiarę” czas ten zostaje odpowiednio skrócony,</li>
+				<li>„Tarcza” – paczka odnaleziona przez „Ofiarę” sprawia, że jest on niewykrywalny dla innych graczy przez okres 5-ciu minut, natomiast odnalezienie tej paczki przez „Łowcę” skutkować będzie jej zniszczeniem,</li>
+				<li>„Luneta” – paczka odnaleziona przez „Łowcę” sprawia, że przez 5 minut zbliżenie się przez niego do „Ofiary” na odległość mniejszą niż dwukrotna wartość odległości kontaktowej uznawane będzie za jej upolowanie, lecz gdy paczka zostanie odnaleziona przez „Ofiarę” to paczka zostanie zniszczona,</li>
+				<li>„Zamiana ról” – zdobyta przez „Łowcę” sprawia, że staje się on „Ofiarą” i odwrotnie,</li>
+			</ul>
+		</li>
+		<li>Zbliżenie się gracza do paczki na odległość kontaktową skutkuje zdobyciem dla niego artefaktu, który ona zawierała.</li>
+		<li>Informacja o zawartości paczki może być ukryta.</li>
+		<li>Wszelkie informacje dotyczące danej rozgrywki podawane są w aplikacji zainstalowanej na telefonie z systemem Android.</li>
+	</ol>
+</div>
+
+{% endblock %}

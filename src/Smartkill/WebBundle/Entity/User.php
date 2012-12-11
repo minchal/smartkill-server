@@ -120,12 +120,45 @@ class User implements UserInterface {
         $this->sessions = new ArrayCollection();
     }
     
+    public function getAvatarUrl()  {
+        return $this->getUploadDir() . ($this->avatar ? $this->avatar : 'default.png');
+    }
+    
+    public function getAvatarPath() {
+        return $this->getUploadRootDir() . ($this->avatar ? $this->avatar : 'default.png');
+    }
+	
+    protected function getUploadRootDir() {
+        return '.'.$this->getUploadDir();
+    }
+	
+    protected function getUploadDir() {
+        return '/media/avatar/';
+    }
+    
+    public function uploadAvatar() {
+		if ($this->avatarFile == null) {
+			return;
+		}
+		
+		$filename = $this->username.'.'.$this->avatarFile->guessExtension();
+        
+		$this->avatarFile->move(
+			$this->getUploadRootDir(),
+			$filename
+		);
+		
+		$this->avatar = $filename;
+		
+		$this->avatarFile = null;
+	}
+    
     /**
      * @inheritDoc
      */
     public function getRoles()
     {
-        return array('ROLE_USER');
+        return $this->admin ? array('ROLE_ADMIN','ROLE_USER') : array('ROLE_USER');
     }
 	
     /**
@@ -282,39 +315,6 @@ class User implements UserInterface {
     {
         return $this->avatar;
     }
-    
-    public function getAvatarUrl()  {
-        return $this->getUploadDir() . ($this->avatar ? $this->avatar : 'default.png');
-    }
-    
-    public function getAvatarPath() {
-        return $this->getUploadRootDir() . ($this->avatar ? $this->avatar : 'default.png');
-    }
-	
-    protected function getUploadRootDir() {
-        return '.'.$this->getUploadDir();
-    }
-	
-    protected function getUploadDir() {
-        return '/media/avatar/';
-    }
-    
-    public function uploadAvatar() {
-		if ($this->avatarFile == null) {
-			return;
-		}
-		
-		$filename = $this->username.'.'.$this->avatarFile->guessExtension();
-        
-		$this->avatarFile->move(
-			$this->getUploadRootDir(),
-			$filename
-		);
-		
-		$this->avatar = $filename;
-		
-		$this->avatarFile = null;
-	}
 	
     /**
      * Set registeredAt
