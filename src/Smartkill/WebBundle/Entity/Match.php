@@ -3,6 +3,7 @@
 namespace Smartkill\WebBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\SerializerBundle\Annotation\Accessor;
 
@@ -25,6 +26,11 @@ class Match {
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+    
+    /**
+     * @ORM\Column(type="string", columnDefinition="ENUM('planed', 'goingon', 'finished')")
+     */
+    private $status;
     
     /**
      * @ORM\Column(type="string", length=150)
@@ -75,6 +81,11 @@ class Match {
      * @ORM\Column(type="datetime", name="due_date")
      */
     private $dueDate;
+    
+    /**
+     * @ORM\Column(type="datetime", name="start_date", nullable=true)
+     */
+    private $startDate;
     
     /**
      * @ORM\Column(type="integer", name="max_players")
@@ -143,6 +154,15 @@ class Match {
         $this->dueDate = new \DateTime();
     }
     
+    /**
+     * Powierzchnia obszaru gry w km2.
+     * 
+     * @return number
+     */
+    public function getArea() {
+		return pow($this->getSize()/1000,2)*pi();
+	}
+	
     public function getLengthDesc()
     {
 		$h = floor($this->length / 60);
@@ -154,24 +174,74 @@ class Match {
 		return $this->getPlayers()->count() >= $this->getMaxPlayers();
 	}
     
+    public function isStatus($status) {
+		return $this->getStatus() == $status;
+	}
+    
     public function getCreatedById()
     {
     	return $this->getCreatedBy() ? $this->getCreatedBy()->getId() : null;
     }
     
-    public function getStatus()
-    {
-		// @TODO
-    	return self::PLANED;
-    }
-    
     /**
-     * Powierzchnia obszaru gry w km2.
-     * 
-     * @return number
+     * Rozpoczęcie mecz:
+     *  - zablokowanie edycji (zmiana statusu)
+     *  - ustawienie czasu rozpoczęcia
+     *  - wylosowanie paczek
      */
-    public function getArea() {
-		return pow($this->getSize()/1000,2)*pi();
+    public function start(EntityManager $em) {
+		if ($this->status != self::PLANED) {
+			throw new \LogicException('Pylko planowany mecz może zostać rozpoczęty!');
+		}
+		
+		$this->status    = self::GOINGON;
+		$this->startDate = new \DateTime();
+		$em -> persist($this);
+		
+		$pkgs = $this->getPackagesTypes();
+		$count = round($this->getArea() * $this->getDensity());
+		
+		if ($pkgs && $count) {
+			for ($i=0; $i<$count; $i++) {
+				$pkg = Package::createRandom($this->getLat(), $this->getLng(), $this->getSize(), $pkgs);
+				$pkg -> setMatch($this);
+				$em -> persist($pkg);
+			}
+		}
+		
+		//$em -> flush();
+	}
+	
+	private function getPackagesTypes() {
+		$types = array();
+		
+		foreach (Package::getTypes() as $type) {
+			$m = 'getPkg'.ucfirst($type);
+			if ($this->$m()) {
+				$types[] = $type;
+			}
+		}
+		
+		return $types;
+	}
+	
+	/**
+	 * Zakończenie meczu:
+	 *  - zmiana statusu
+	 *  - dodanie użytkownikom zdobytych punktów
+	 */
+	public function finish() {
+		if ($this->status != self::GOINGON) {
+			throw new \LogicException('Pylko trwający mecz może zostać zakończony!');
+		}
+		
+		$this->status = self::FINISHED;
+		$em -> persist($this);
+		
+		
+		
+		
+		$em -> flush();
 	}
     
     /**
@@ -182,6 +252,16 @@ class Match {
     public function getId()
     {
         return $this->id;
+    }
+    
+    /**
+     * Get status
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+    	return $this->status;
     }
 
     /**

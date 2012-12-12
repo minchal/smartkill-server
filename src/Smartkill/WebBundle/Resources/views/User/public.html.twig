@@ -7,14 +7,16 @@
 {% block content %}
 
 	<div class="block">
-		<ul class="nav nav-pills pull-right">
-			<li><a href="{{ path('user_edit', { 'id': entity.id }) }}"><i class="icon-pencil"></i> Edytuj</a></li>
-			<li><a href="#deleteModal" data-toggle="modal"><i class="icon-remove"></i> Usuń</a></li>
-		</ul>
+		{% if is_granted('ROLE_ADMIN') %}
+			<ul class="nav nav-pills pull-right">
+				<li><a href="{{ path('user_edit', { 'id': entity.id }) }}"><i class="icon-pencil"></i> Edytuj</a></li>
+				<li><a href="#deleteModal" data-toggle="modal"><i class="icon-remove"></i> Usuń</a></li>
+			</ul>
 		
-		<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-			{{ question.modal('Usuń użytkownika', 'Czy jesteś pewien, że chcesz usunąć użytkownika?', deleteForm, path('user_delete', { 'id': entity.id })) }}
-		</div>
+			<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+				{{ question.modal('Usuń użytkownika', 'Czy jesteś pewien, że chcesz usunąć użytkownika?', deleteForm, path('user_delete', { 'id': entity.id })) }}
+			</div>
+		{% endif %}
 		
 		<h2>Użytkownik: {{ entity.username }}</h2>
 		

@@ -34,12 +34,12 @@ class MatchUser {
     private $type;
     
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @ORM\Column(type="decimal", scale=2, nullable=true)
      */
     private $lat;
     
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @ORM\Column(type="decimal", scale=2, nullable=true)
      */
     private $lng;
     
@@ -54,7 +54,7 @@ class MatchUser {
     private $disqualification = false;
     
     /**
-     * @ORM\Column(type="datetime", name="updated_at")
+     * @ORM\Column(type="datetime", name="updated_at", nullable=true)
      */
     private $updatedAt;
 

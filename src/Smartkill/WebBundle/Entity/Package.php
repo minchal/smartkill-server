@@ -51,7 +51,43 @@ class Package {
      */
     private $type;
     
-
+	public static function getTypes() {
+		return array('time','shield','snipe','switch');
+	}
+	
+	const SCALE = 1000;
+	
+	public static function createRandom($lat, $lng, $r, $types) {
+		$pkg = new self();
+		
+		$d = rand(0, $r * self::SCALE) / self::SCALE;
+		$a = rand(0, pi()*2 * self::SCALE) / self::SCALE;
+		
+		// promień ziemi w metrach
+		$R = 6371000;
+		
+		/*
+		http://www.movable-type.co.uk/scripts/latlong.html
+		var lat2 = Math.asin( Math.sin(lat1)*Math.cos(d/R) + 
+					  Math.cos(lat1)*Math.sin(d/R)*Math.cos(brng) );
+		var lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(d/R)*Math.cos(lat1), 
+							 Math.cos(d/R)-Math.sin(lat1)*Math.sin(lat2));
+		*/
+		
+		$lat = deg2rad($lat);
+		$lng = deg2rad($lng);
+		
+		$lat2 = asin(sin($lat)*cos($d/$R) + cos($lat)*sin($d/$R)*cos($a));
+		$lng2 = $lng + atan2(sin($a)*sin($d/$R)*cos($lat), cos($d/$R) - sin($lat)*sin($lat2));
+		
+		$pkg -> setLat(rad2deg($lat2));
+		$pkg -> setLng(rad2deg($lng2));
+		$pkg -> setType($types[array_rand($types)]);
+		$pkg -> setStatus(self::AVAILABLE);
+		
+		return $pkg;
+	}
+	
     /**
      * Get id
      *

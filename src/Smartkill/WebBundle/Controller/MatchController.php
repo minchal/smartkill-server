@@ -4,10 +4,13 @@ namespace Smartkill\WebBundle\Controller;
 
 use Smartkill\WebBundle\Entity\Match;
 use Smartkill\WebBundle\Entity\MatchUser;
+use Smartkill\WebBundle\Entity\User;
+use Smartkill\WebBundle\Entity\Package;
 use Smartkill\WebBundle\Form\MatchType;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Pagerfanta\Pagerfanta;
@@ -15,6 +18,19 @@ use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 
 class MatchController extends Controller {
+	
+	/**
+	 * Mecz może być zarządzany, gdy ma status zaplanowany i użytkownik jest właścicielem albo adminem.
+	 */
+	public function canManage(Match $match, $user = null) {
+		return 
+			$match->isStatus(Match::PLANED) && 
+			(
+				$this->get('security.context')->isGranted('ROLE_ADMIN') || 
+				$user && $user == $match->getCreatedBy()
+			)
+		;
+	}
 	
     public function indexAction($page)  {
 		$em = $this->getDoctrine()->getManager();
@@ -44,28 +60,38 @@ class MatchController extends Controller {
 		$mu = $em->getRepository('SmartkillWebBundle:MatchUser');
 		
 		$match = $em->getRepository('SmartkillWebBundle:Match')->find($id);
-		$user  = $this->getUser();
 		
 		if (!$match) {
 			throw $this->createNotFoundException('Nie znaleziono takiego meczu.');
 		}
 		
-		$joined = $mu->find(array('user'=>$user->getId(), 'match'=>$match->getId()));
+		if (isset($_GET['start'])) {
+			$match -> start($em);
+		}
 		
-		$joinForm = !$joined ? $this->createJoinForm($match->getId())->createView() : null;
+		$joined = false;
+		
+		if ($this->get('security.context')->isGranted('ROLE_USER')) {
+			$joined = $mu->find(array('user'=>$this->getUser()->getId(), 'match'=>$match->getId()));
+		}
 		
 		return $this->render('SmartkillWebBundle:Match:show.html.twig', array(
 			'entity'      => $match,
-			'user'        => $user,
 			'joined'	  => $joined,
-			'joinForm'    => $joinForm,
+			'canManage'	  => $this->canManage($match, $this->getUser()),
 			'preys'       => $mu -> findBy(array('match'=>$match,'type'=>MatchUser::TYPE_PREY)),
 			'hunters'     => $mu -> findBy(array('match'=>$match,'type'=>MatchUser::TYPE_HUNTER)),
+			'joinForm'    => $this->createJoinForm($match->getId())->createView(),
 			'deleteForm'  => $this->createDeleteForm($match->getId())->createView(),
+			'random' => Package::createRandom($match->getLat(), $match->getLng(), $match->getSize(), Package::getTypes())
 		));
     }
 	
     public function addAction() {
+		if (!$this->get('security.context')->isGranted('ROLE_USER')) {
+			throw new AccessDeniedException();
+		}
+		
 		$request = $this->getRequest();
 		$user    = $this->getUser();
         $entity  = new Match();
@@ -106,6 +132,11 @@ class MatchController extends Controller {
 		$em      = $this->getDoctrine()->getManager();
         $entity  = $em->getRepository('SmartkillWebBundle:Match')->find($id);
         $old     = clone $entity;
+        
+        if (!$this->canManage($entity, $this->getUser())) {
+			throw new AccessDeniedException();
+		}
+        
 		$form    = $this->createForm(new MatchType(), $entity);
 		
 		if ($request->getMethod() == 'POST') {
@@ -137,6 +168,10 @@ class MatchController extends Controller {
 	}
 	
 	public function deleteAction(Request $request, $id) {
+		if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+			throw new AccessDeniedException();
+		}
+		
 		$em = $this->getDoctrine()->getManager();
 		$entity = $em->getRepository('SmartkillWebBundle:Match')->find($id);
 		
@@ -177,12 +212,24 @@ class MatchController extends Controller {
 	}
     
     public function joinAction(Request $request, $id) {
-		$response = new Response();
-		$response->headers->set('Content-Type', 'application/json');
+		if (!$this->get('security.context')->isGranted('ROLE_USER')) {
+			throw new AccessDeniedException();
+		}
 		
 		$user  = $this->getUser();
 		$em    = $this->getDoctrine()->getManager();
+		$mu    = $em->getRepository('SmartkillWebBundle:MatchUser');
 		$match = $em->getRepository('SmartkillWebBundle:Match')->find($id);
+		
+		if (!$match) {
+			throw $this->createNotFoundException('Unable to find Match entity.');
+		}
+		
+		$joined = $mu->find(array('user'=>$user->getId(), 'match'=>$match->getId()));
+		
+		if ($joined) {
+			return new JsonResponse(array('status' => 'error', 'msg'=> 'Już dołączyłeś do tego meczu!'));
+		}
 		
 		$form = $this->createJoinForm($match->getId())
 			->bind($request);
@@ -191,33 +238,23 @@ class MatchController extends Controller {
 			throw $this->createNotFoundException('Form invalid.');
 		}
 		
-		if (!$match) {
-			throw $this->createNotFoundException('Unable to find Match entity.');
-		}
-		
 		if ($match->isFull()) {
-			$response -> setContent(json_encode(array('status' => 'error', 'msg'=> 'Osiągnięto już limit graczy dla tego meczu!')));
-			return $response;
+			return new JsonResponse(array('status' => 'error', 'msg'=> 'Osiągnięto już limit graczy dla tego meczu!'));
 		}
 		
 		if ($match->getPassword()) {
 			$data = $form->getData();
 			
 			if ($match->getPassword() != $data['password']) {
-				$response -> setContent(json_encode(array('status' => 'error', 'msg'=> 'Podane hasło jest nieprawidłowe!')));
-				return $response;
+				return new JsonResponse(array('status' => 'error', 'msg'=> 'Podane hasło jest nieprawidłowe!'));
 			}
 		}
 		
 		$entity = new MatchUser();
 		$entity -> setType($entity::TYPE_PREY);
-		$entity -> setLat($match->getLat());
-		$entity -> setLng($match->getLng());
-		$entity -> setUpdatedAt(new \DateTime());
 		$entity -> setUser($user);
 		$entity -> setMatch($match);
 		
-		$em = $this->getDoctrine()->getManager();
 		$em->persist($entity);
 		$em->flush();
 		
@@ -226,8 +263,7 @@ class MatchController extends Controller {
 			'Zostałeś zapisany do meczu!'
 		);
 		
-		$response -> setContent(json_encode(array('status' => 'success')));
-		return $response;
+		return new JsonResponse(array('status' => 'success'));
     }
     
 	private function createJoinForm($id) {

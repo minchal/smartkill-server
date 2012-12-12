@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\FormError;
 
@@ -42,6 +43,10 @@ class UserController extends Controller {
     }
     
     public function registerAction() {
+		if ($this->get('security.context')->isGranted('ROLE_USER')) {
+			throw new AccessDeniedException();
+		}
+		
 		$request = $this->getRequest();
 		$form = $this->createForm(new RegistrationType(), new User());
 		
@@ -70,6 +75,10 @@ class UserController extends Controller {
 	}
 	
 	public function profileAction() {
+		if (!$this->get('security.context')->isGranted('ROLE_USER')) {
+			throw new AccessDeniedException();
+		}
+		
 		$request = $this->getRequest();
 		$em      = $this->getDoctrine()->getManager();
 		
@@ -119,6 +128,10 @@ class UserController extends Controller {
 	}
 	
 	public function avatarAction() {
+		if (!$this->get('security.context')->isGranted('ROLE_USER')) {
+			throw new AccessDeniedException();
+		}
+		
 		$request = $this->getRequest();
 		$em      = $this->getDoctrine()->getManager();
 		
@@ -193,6 +206,10 @@ class UserController extends Controller {
 	}
 	
     public function editAction($id) {
+		if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+			throw new AccessDeniedException();
+		}
+		
 		$request = $this->getRequest();
 		$em      = $this->getDoctrine()->getManager();
         $entity  = $em->getRepository('SmartkillWebBundle:User')->find($id);
@@ -233,6 +250,10 @@ class UserController extends Controller {
 	}
 	
 	public function deleteAction(Request $request, $id) {
+		if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+			throw new AccessDeniedException();
+		}
+		
 		$em = $this->getDoctrine()->getManager();
 		$entity = $em->getRepository('SmartkillWebBundle:User')->find($id);
 		

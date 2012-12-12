@@ -16,27 +16,31 @@
 
 	<div class="block">
 		<ul class="nav nav-pills pull-right">
-			<li><a href="{{ path('match_edit', { 'id': entity.id }) }}"><i class="icon-pencil"></i> Edytuj</a></li>
-			<li><a href="#deleteModal" data-toggle="modal"><i class="icon-remove"></i> Usuń</a></li>
+			{% if canManage %}
+				<li><a href="{{ path('match_edit', { 'id': entity.id }) }}"><i class="icon-pencil"></i> Edytuj</a></li>
+			{% endif %}
+			
+			{% if is_granted('ROLE_ADMIN') %}
+				<li><a href="#deleteModal" data-toggle="modal"><i class="icon-remove"></i> Usuń</a></li>
+			{% endif %}
 		</ul>
 		
-		<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-			{{ question.modal('Usuń mecz', 'Czy jesteś pewien, że chcesz usunąć mecz?', deleteForm, path('match_delete', { 'id': entity.id })) }}
-		</div>
+		{% if is_granted('ROLE_ADMIN') %}
+			<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+				{{ question.modal('Usuń mecz', 'Czy jesteś pewien, że chcesz usunąć mecz?', deleteForm, path('match_delete', { 'id': entity.id })) }}
+			</div>
+		{% endif %}
 		
 		<h2>Mecz: {{ entity.name }} </h2>
 		
 		<div class="row-fluid">
 			<div class="span5">
-				<div id="map" class="map-canvas" style="height: 250px;"
+				<div id="map" class="map-canvas" style="height: 360px;"
 					data-lat="{{ entity.lat }}" data-lng="{{ entity.lng }}" data-size="{{ entity.size }}"
+					data-lat2="{{ random.lat }}" data-lng2="{{ random.lng }}"
 				></div>
 				
-				{% if entity.descr %}
-					<p class="well well-small">{{ entity.descr|nl2br }}</p>
-				{% endif %}
-				
-				{% if joinForm %}
+				{% if not joined and is_granted('ROLE_USER') %}
 			    	<form id="pass-form" data-pass="{{ entity.hasPassword }}" action="{{ path('match_join', { 'id': entity.id }) }}" method="post">
 			    		<div id="pass-error" class="alert alert-error hide">Hasło nieprawidłowe</div>
 			    		
@@ -76,12 +80,24 @@
 					</tr>
 					<tr>
 						<td><strong>Lokalizacja:</strong></td>
-						<td>Lat: {{ entity.lat }}, Lng: {{ entity.lng }}, R={{ entity.size }} {{ entity.getArea }}</td>
+						<td>Lat: {{ entity.lat }}, Lng: {{ entity.lng }}, R={{ entity.size }}</td>
 					</tr>
 				</table>
 				
-				<div class="alert alert-info">Przeciągaj użytkowników pomiędzy grupami, aby zmieniać ich rolę w meczu.</div>
-				
+				{% if entity.descr %}
+					<p class="well well-small">{{ entity.descr|nl2br }}</p>
+				{% endif %}
+			</div>
+		</div>
+		
+		{% if canManage %}
+			<div class="alert alert-info" id="players-manage">
+				Przeciągaj użytkowników pomiędzy grupami, aby zmieniać ich rolę w meczu.
+			</div>
+		{% endif %}
+		
+		<div class="row-fluid">
+			<div class="span6">
 				{% macro user(mu) %}
 					<div class="user" 
 						data-switch="{{ path('match_user_switch', { 'id': mu.match.id, 'user': mu.user.id }) }}"
@@ -90,6 +106,7 @@
 						<a href="{{ path('user', { username: mu.user.username }) }}">
 							<img src="{{ mu.user.getAvatarUrl | imagine_filter('avatar_small') }}" alt="" />
 							{{ mu.user.username }}
+							<div class="user-points"><div rel="tooltip" title="Zdobyte&nbsp;punkty">5</div></div>
 						</a>
 					</div>
 				{% endmacro %}
@@ -100,72 +117,75 @@
 						{{ _self.user(mu) }}
 					{% endfor %}
 				</div>
-				
+			</div>
+			<div class="span6">
 				<h3>Ofiary</h3>
 				<div class="users" id="preys">
 					{% for mu in preys %}
 						{{ _self.user(mu) }}
 					{% endfor %}
 				</div>
-				
-				<div class="alert alert-error alert-block hide" id="delete">
-					Upuść tutaj, aby usunąć gracza z meczu.
+			</div>
+		</div>
+		
+		<div class="alert alert-error alert-block hide" id="delete">
+			Upuść tutaj, aby usunąć gracza z meczu.
+		</div>
+		
+		{% if not entity.isStatus('planed') %}
+			<h3>Wydarzenia</h3>
+			
+			<table class="table table-striped table-bordered">
+				<colgroup span="1" />
+				<colgroup span="1" width="150px" align="center" />
+				<colgroup span="1" width="80px" />
+				<thead>
+					<tr>
+						<th>Zdarzenie</th>
+						<th>Data</th>
+						<th>Lokalizacja</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for event in entity.events %}
+					<tr>
+						{% if event.getType == 'catch' %}
+							<td>
+								<a href="{{ path('user', {username:event.hunter.username}) }}">{{ event.hunter.username }}</a> 
+								złapał gracza
+								<a href="{{ path('user', {username:event.prey.username}) }}">{{ event.prey.username }}</a> 
+							</td>
+						{% elseif event.getType == 'found' %}
+							<td>
+								<a href="{{ path('user', {username:event.player.username}) }}">{{ event.player.username }}</a> 
+								zdobył paczkę {{ event.package.type }}
+							</td>
+						{% endif %}
+						
+						<td>{{ event.date|date('Y-m-d H:i') }}</td>
+						<td>
+							<a href="#mapModal" role="button" class="btn btn-small btn-block mapModalBtn" 
+								data-lat="{{ event.lat }}"
+								data-lng="{{ event.lng }}">
+								<i class="icon-globe"></i> Mapa
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+			
+			<div id="mapModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h3>Lokalizacja</h3>
+					<span id="mapModalDesc"></span>
+				</div>
+				<div class="modal-body">
+					<div id="map_event" class="map-canvas" style="height: 350px;"></div>
 				</div>
 			</div>
-		</div>
-		
-		<h3>Wydarzenia</h3>
-		
-		<table class="table table-striped table-bordered">
-			<colgroup span="1" />
-			<colgroup span="1" width="150px" align="center" />
-			<colgroup span="1" width="80px" />
-			<thead>
-				<tr>
-					<th>Zdarzenie</th>
-					<th>Data</th>
-					<th>Lokalizacja</th>
-				</tr>
-			</thead>
-			<tbody>
-			{% for event in entity.events %}
-				<tr>
-					{% if event.getType == 'catch' %}
-						<td>
-							<a href="{{ path('user', {username:event.hunter.username}) }}">{{ event.hunter.username }}</a> 
-							złapał gracza
-							<a href="{{ path('user', {username:event.prey.username}) }}">{{ event.prey.username }}</a> 
-						</td>
-					{% elseif event.getType == 'found' %}
-						<td>
-							<a href="{{ path('user', {username:event.player.username}) }}">{{ event.player.username }}</a> 
-							zdobył paczkę {{ event.package.type }}
-						</td>
-					{% endif %}
-					
-					<td>{{ event.date|date('Y-m-d H:i') }}</td>
-					<td>
-						<a href="#mapModal" role="button" class="btn btn-small btn-block mapModalBtn" 
-							data-lat="{{ event.lat }}"
-							data-lng="{{ event.lng }}">
-							<i class="icon-globe"></i> Mapa
-						</a>
-					</td>
-				</tr>
-			{% endfor %}
-			</tbody>
-		</table>
-		
-		<div id="mapModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h3>Lokalizacja</h3>
-				<span id="mapModalDesc"></span>
-			</div>
-			<div class="modal-body">
-				<div id="map_event" class="map-canvas" style="height: 350px;"></div>
-			</div>
-		</div>
+		{% endif %}
 	</div>
 	
 {% endblock %}

@@ -13,16 +13,13 @@
 }
 
 .user {
+	position: relative;
 	float: left; width: 75px;
 	margin: 0 10px 0 0; padding: 3px;
 	text-align: center;
 	background: #fff;
 	.border-radius(5px);
 	.box-shadow(0 0 3px #999);
-	
-	&.ui-draggable-dragging {
-		
-	}
 	
 	a {
 		display: block;
@@ -32,6 +29,15 @@
 		display: block;
 		margin: 0 0 3px 0;
 		.border-radius(5px);
+	}
+	
+	&-points {
+		dispaly: block;
+		position: absolute; top: 5px; left: 5px;
+		padding: 0 5px;
+		background: #fff; background: rgba(255,255,255,0.8);
+		color: #000; font-size: @baseFontSize * 0.9;
+		.border-radius(3px);
 	}
 }
 
