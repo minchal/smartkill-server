@@ -7,7 +7,7 @@ $(function(){
 	
 	var map = new google.maps.Map(document.getElementById('map'), {
 		mapTypeId: google.maps.MapTypeId.ROADMAP,
-		zoom: 12
+		zoom: GMAPGuessZoom($rad.val())
 	});
 	
 	map.setCenter(center);

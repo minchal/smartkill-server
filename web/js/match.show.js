@@ -70,13 +70,12 @@ $(function(){
 	
 	// mapy
 	var $map = $('#map');
-	var $modal = $('#mapModal');
 	
 	function showCircleMap(id, lat, lng, radius) {
 		var center = new google.maps.LatLng(lat, lng, true);
 		var map    = new google.maps.Map(document.getElementById(id), {
 			mapTypeId: google.maps.MapTypeId.ROADMAP,
-			zoom: 12
+			zoom: GMAPGuessZoom(radius)
 		});
 		
 		map.setCenter(center);
@@ -98,32 +97,6 @@ $(function(){
 		var marker = new google.maps.Marker({
 			position: new google.maps.LatLng($map.data('lat2'), $map.data('lng2'), true), 
 			map: m
-		});
-		
-		// mapa zdarzenia
-		$modal.modal({
-			show: false
-		});
-		
-		$('.mapModalBtn').click(function(){
-			var $this = $(this);
-			
-			$modal.modal('show');
-			
-			$('#mapModalDesc').html($this.parents('tr').find('td:first-child').html());
-			
-			$modal.on('shown', function () {
-				var map = showCircleMap('map_event', $map.data('lat'), $map.data('lng'), $map.data('size'));
-				
-				var point = new google.maps.LatLng($this.data('lat'), $this.data('lng'), true);
-				
-				var marker = new google.maps.Marker({
-					position: point, 
-					map: map
-				});
-				
-				map.setCenter(point);
-			});
 		});
 	} catch (e) {
 		console.log(e);

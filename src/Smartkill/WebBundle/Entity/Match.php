@@ -30,7 +30,7 @@ class Match {
     /**
      * @ORM\Column(type="string", columnDefinition="ENUM('planed', 'goingon', 'finished')")
      */
-    private $status;
+    private $status = self::PLANED;
     
     /**
      * @ORM\Column(type="string", length=150)
