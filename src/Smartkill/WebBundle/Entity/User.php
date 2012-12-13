@@ -153,6 +153,10 @@ class User implements UserInterface {
 		$this->avatarFile = null;
 	}
     
+    public function getPointsSum() {
+		return $this->getPointsHunter() + $this->getPointsPrey();
+	}
+    
     /**
      * @inheritDoc
      */

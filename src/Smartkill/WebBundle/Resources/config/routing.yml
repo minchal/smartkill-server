@@ -1,3 +1,4 @@
+# strony statyczne
 index:
     pattern:  /
     defaults: { _controller: SmartkillWebBundle:Default:index }
@@ -10,6 +11,7 @@ static_rules:
     pattern:  /rules
     defaults: { _controller: SmartkillWebBundle:Default:static, template: rules }
     
+# podstawowa autoryzacja    
 register:
     pattern:  /register
     defaults: { _controller: SmartkillWebBundle:User:register }
@@ -25,61 +27,86 @@ login_check:
 logout:
     pattern:  /logout
     
+# konto zalogowanego użytkownika
 profile:
     pattern:  /profile
-    defaults: { _controller: SmartkillWebBundle:User:profile }
+    defaults: { _controller: SmartkillWebBundle:Profile:index }
     
-avatar:
-    pattern:  /avatar
-    defaults: { _controller: SmartkillWebBundle:User:avatar }
-
-user:
-    pattern:  /user/{username}
-    defaults: { _controller: SmartkillWebBundle:User:public }
-
-user_edit:
-    pattern:  /user/{id}/edit
-    defaults: { _controller: SmartkillWebBundle:User:edit }
+profile_edit:
+    pattern:  /profile/edit
+    defaults: { _controller: SmartkillWebBundle:Profile:edit }
     
-user_delete:
-    pattern:  /user/{id}/delete
-    defaults: { _controller: SmartkillWebBundle:User:delete }
+profile_avatar:
+    pattern:  /profile/avatar
+    defaults: { _controller: SmartkillWebBundle:Profile:avatar }
+    
+profile_matches:
+    pattern:  /profile/matches/{page}
+    defaults: { _controller: SmartkillWebBundle:Profile:matches, page: 1, type: created }
+    
+profile_joined:
+    pattern:  /profile/joined/{page}
+    defaults: { _controller: SmartkillWebBundle:Profile:matches, page: 1, type: joined }
 
+# przeglądanie użytkowników
 ranking:
     pattern:  /ranking/{page}
     defaults: { _controller: SmartkillWebBundle:User:ranking, page: 1 }
     requirements: { page: "\d+"}
+    
+user:
+    pattern:  /user/{username}/{page}
+    defaults: { _controller: SmartkillWebBundle:User:details, page: 1 }
+    requirements: { id: "\d+", page: "\d+"}
 
+# zarządzanie użytkownikami
+user_edit:
+    pattern:  /user/{id}/edit
+    defaults: { _controller: SmartkillWebBundle:User:edit }
+    requirements: { id: "\d+"}
+    
+user_delete:
+    pattern:  /user/{id}/delete
+    defaults: { _controller: SmartkillWebBundle:User:delete }
+    requirements: { id: "\d+"}
 
-match:
-    pattern:  /match/
+# przeglądanie meczy
+matches:
+    pattern:  /matches/{page}
     defaults: { _controller: SmartkillWebBundle:Match:index, page: 1 }
     requirements: { page: "\d+"}
     
+match:
+    pattern:  /match/{id}
+    defaults: { _controller: SmartkillWebBundle:Match:details }
+    requirements: { id: "\d+"}
+
+# zarządzanie meczami
 match_add:
     pattern:  /match/add
     defaults: { _controller: SmartkillWebBundle:Match:add }
     
-match_show:
-    pattern:  /match/{id}/show
-    defaults: { _controller: SmartkillWebBundle:Match:show }
-
 match_edit:
     pattern:  /match/{id}/edit
     defaults: { _controller: SmartkillWebBundle:Match:edit }
+    requirements: { id: "\d+"}
     
 match_delete:
     pattern:  /match/{id}/delete
     defaults: { _controller: SmartkillWebBundle:Match:delete }
+    requirements: { id: "\d+"}
     
 match_join:
     pattern:  /match/{id}/join
     defaults: { _controller: SmartkillWebBundle:Match:join }
+    requirements: { id: "\d+"}
     
 match_user_switch:
     pattern:  /match/{id}/user/{user}/switch
     defaults: { _controller: SmartkillWebBundle:MatchUser:switch }
+    requirements: { id: "\d+"}
     
 match_user_delete:
     pattern:  /match/{id}/user/{user}/delete
     defaults: { _controller: SmartkillWebBundle:MatchUser:delete }
+    requirements: { id: "\d+"}

@@ -38,7 +38,7 @@
 					<ul class="nav">
 						{% set r = app.request.get('_route') %}
 						<li{% if r=='index'   %} class="active"{% endif %}><a href="{{ path('index') }}">Strona główna</a></li>
-						<li{% if r=='match'   %} class="active"{% endif %}><a href="{{ path('match') }}">Mecze</a></li>
+						<li{% if r=='matches' %} class="active"{% endif %}><a href="{{ path('matches') }}">Mecze</a></li>
 						<li{% if r=='ranking' %} class="active"{% endif %}><a href="{{ path('ranking') }}">Ranking</a></li>
 					</ul>
 				</div>

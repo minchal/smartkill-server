@@ -73,9 +73,9 @@ class Match {
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank()
-     * @Assert\Range(min=30, max=180)
+     * @Assert\Range(min=30, max=2000)
      */
-    private $length;
+    private $length = 60;
     
     /**
      * @ORM\Column(type="datetime", name="due_date")
@@ -177,6 +177,13 @@ class Match {
     public function isStatus($status) {
 		return $this->getStatus() == $status;
 	}
+	
+	/**
+	 * Czy mecz jest na tyle stary, że można oznaczyć na szaro
+	 */
+	public function isOld() {
+		return $this->dueDate < new \DateTime('midnight');
+	}
     
     public function getCreatedById()
     {
@@ -209,7 +216,7 @@ class Match {
 			}
 		}
 		
-		//$em -> flush();
+		$em -> flush();
 	}
 	
 	private function getPackagesTypes() {

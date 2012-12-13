@@ -1,0 +1,68 @@
+
+{% macro map_modal() %}
+	<div id="mapModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3>Lokalizacja</h3>
+			<span id="mapModalDesc"></span>
+		</div>
+		<div class="modal-body">
+			<div id="map-modal" class="map-canvas" style="height: 350px;"></div>
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro listing(entities) %}
+	<table class="table table-striped table-bordered">
+		<colgroup span="1" />
+		<colgroup span="1" width="80px" />
+		<colgroup span="1" width="150px" align="center" />
+		<colgroup span="2" width="60px" align="right" />
+		<colgroup span="1" width="20px" align="center" />
+		<colgroup span="1" width="110px" />
+	    <thead>
+	        <tr>
+	            <th>Nazwa</th>
+	            <th>Lokalizacja</th>
+	            <th>Termin</th>
+	            <th>Długość</th>
+				<th><div rel="tooltip" title="Zapisanych / Maksymalnie">Graczy</div></th>
+	            <th>Hasło</th>
+	            <th></th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	    {% for entity in entities %}
+	        {{ _self.listing_row(entity) }}
+	    {% endfor %}
+	    </tbody>
+	</table>
+	
+	{{ _self.map_modal }}
+	
+{% endmacro %}
+
+{% macro listing_row(entity) %}
+	<tr{% if entity.status == 'finished' or entity.isOld %} class="muted"{% endif %} >
+		<td>
+			{% if entity.status == 'goingon' %}
+				<i class="icon-fire" rel="tooltip" title="Właśnie trwa!"></i>
+			{% endif %}
+			{{ entity.name }}</td>
+		<td>
+			<a href="#mapModal" role="button" class="btn btn-small btn-block mapModalBtn" 
+				data-lat="{{ entity.lat }}"
+				data-lng="{{ entity.lng }}"
+				data-radius="{{ entity.size }}">
+				<i class="icon-map-marker"></i> Mapa
+			</a>
+		</td>
+		<td>
+			{{ entity.dueDate|date('Y-m-d H:i') }}
+		</td>
+		<td><i class="icon-time"></i> {{ entity.getLengthDesc }}</td>
+		<td>{{ entity.players.count }} / {{ entity.maxPlayers }}</td>
+		<td>{% if entity.password %}<i class="icon-ok"></i>{% endif %}</td>
+		<td><a class="btn btn-small btn-block" href="{{ path('match', { 'id': entity.id }) }}"><i class="icon-eye-open"></i> Szczegóły</a></td>
+	</tr>
+{% endmacro %}

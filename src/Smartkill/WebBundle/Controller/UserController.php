@@ -74,111 +74,42 @@ class UserController extends Controller {
         return $this->render('SmartkillWebBundle:User:register.html.twig', array('form' => $form->createView()));
 	}
 	
-	public function profileAction() {
-		if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-			throw new AccessDeniedException();
-		}
-		
+	public function detailsAction($username, $page) {
 		$request = $this->getRequest();
 		$em      = $this->getDoctrine()->getManager();
+		$repository = $em->getRepository('SmartkillWebBundle:User');
 		
-		$user = $this -> getUser();
-		$old  = clone $user;
+		$user = $repository->findOneByUsername($username);
 		
-		$factory = $this->get('security.encoder_factory');
-		$encoder = $factory->getEncoder($user);
-		
-		$form = $this->createForm(new ProfileType(), $user);
-		
-		if ($request->getMethod() == 'POST') {
-			$form->bindRequest($request);
-			
-			if ($user->oldPassword) {
-				$p = $encoder->encodePassword($user->oldPassword, $user->getSalt());
-				
-				if ($p != $old->getPassword()) {
-					$form->get('oldPassword')->addError(new FormError('Podane hasło jest nieprawidłowe!'));
-				}
-			}
-			
-			if ($form->isvalid()) {
-				if ($user->oldPassword && $user->getPassword()) {
-					$password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
-					$user -> setPassword($password);
-				} else {
-					$user -> setPassword($old->getPassword());
-				}
-				
-				$em->persist($user);
-				$em->flush();
-				
-				$this->get('session')->setFlash(
-					'success',
-					'Zmiany w profilu zostały zapisane!'
-				);
-				
-				return $this->redirect($request->getRequestUri());
-			}
+		if (!$user) {
+			throw $this->createNotFoundException('Nie znaleziono takiego użytkownika!');
 		}
 		
-        return $this->render('SmartkillWebBundle:User:profile.html.twig', array(
-        	'form'   => $form->createView(),
-        	'entity' => $user
-        ));
-	}
-	
-	public function avatarAction() {
-		if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-			throw new AccessDeniedException();
+		$query = $em->getRepository('SmartkillWebBundle:Match')
+			->createQueryBuilder('m')
+			->orderBy('m.dueDate','DESC')
+			->innerJoin('m.players','p','WITH','p.user = :user')
+			->setParameter('user', $user);
+		
+		try {
+			$pager = new Pagerfanta(new DoctrineORMAdapter($query->getQuery()));
+			$pager
+				->setMaxPerPage(20)
+				->setCurrentPage($page);
+		} catch(NotValidCurrentPageException $e) {
+			throw $this->createNotFoundException();
 		}
 		
-		$request = $this->getRequest();
-		$em      = $this->getDoctrine()->getManager();
+		$pos = $repository->createQueryBuilder('u')
+			->select('COUNT(u.id)+1')
+			->where('u.pointsPrey + u.pointsHunter > ?1')
+			->setParameter(1, $user->getPointsSum())
+			->getQuery();
 		
-		$user = $this -> getUser();
-		
-		$form = $this->createFormBuilder($user)
-        	->add('avatarFile', 'file', array('label'=>'Wybierz plik:', 'required'=>false, 'constraints'=> new NotBlank()))
-        	->getForm();
-        
-		if ($request->getMethod() == 'POST') {
-			$form->bindRequest($request);
-			
-			if ($form->isvalid()) {
-				$user->uploadAvatar();
-				
-				$em->persist($user);
-				$em->flush();
-				
-				$cm = $this->get('liip_imagine.cache.manager');
-				
-				foreach ($this->container->getParameter('liip_imagine.filter_sets') as $f => $v) {
-					$cm->remove($user->getAvatarUrl(), $f);
-				}
-				
-				$this->get('session')->setFlash(
-					'success',
-					'Avatar został zapisany!'
-				);
-				
-				return $this->redirect($request->getRequestUri());
-			}
-		}
-		
-        return $this->render('SmartkillWebBundle:User:avatar.html.twig', array(
-        	'form'   => $form->createView(),
-        	'entity' => $user
-        ));
-	}
-	
-	public function publicAction($username) {
-		$request = $this->getRequest();
-		$em      = $this->getDoctrine()->getManager();
-		
-		$user = $em->getRepository('SmartkillWebBundle:User')->findOneByUsername($username);
-		
-        return $this->render('SmartkillWebBundle:User:public.html.twig', array(
-        	'entity' => $user,
+        return $this->render('SmartkillWebBundle:User:details.html.twig', array(
+        	'position'    => $pos->getSingleScalarResult(),
+        	'entity'      => $user,
+        	'pager'       => $pager,
 			'deleteForm'  => $this->createDeleteForm($user->getId())->createView(),
         ));
 	}
@@ -186,12 +117,16 @@ class UserController extends Controller {
 	public function rankingAction($page) {
 		$repository = $this->getDoctrine()->getRepository('SmartkillWebBundle:User');
 		
-		$query = $repository->createQueryBuilder('u')
-			->orderBy('u.pointsPrey + u.pointsHunter','DESC')
-			->getQuery();
+		$qb2 = $repository->createQueryBuilder('uu')
+			->select('COUNT(uu.id)+1')
+			->where('uu.pointsPrey+uu.pointsHunter > u.pointsPrey+u.pointsHunter');
+		
+		$qb = $repository->createQueryBuilder('u')
+			->addSelect('('.$qb2->getDQL().') AS position')
+			->orderBy('u.pointsPrey + u.pointsHunter','DESC');
 		
 		try {
-			$pager = new Pagerfanta(new DoctrineORMAdapter($query));
+			$pager = new Pagerfanta(new DoctrineORMAdapter($qb->getQuery()));
 			
 			$pager
 				->setMaxPerPage(20)
@@ -213,6 +148,11 @@ class UserController extends Controller {
 		$request = $this->getRequest();
 		$em      = $this->getDoctrine()->getManager();
         $entity  = $em->getRepository('SmartkillWebBundle:User')->find($id);
+        
+		if (!$entity) {
+			throw $this->createNotFoundException('Nie znaleziono takiego użytkownika!');
+		}
+		
         $old     = clone $entity;
 		
 		$factory = $this->get('security.encoder_factory');
@@ -258,7 +198,7 @@ class UserController extends Controller {
 		$entity = $em->getRepository('SmartkillWebBundle:User')->find($id);
 		
 		if (!$entity) {
-			throw $this->createNotFoundException();
+			throw $this->createNotFoundException('Nie znaleziono takiego użytkownika!');
 		}
 		
 		$form = $this->createDeleteForm($id)->bind($request);

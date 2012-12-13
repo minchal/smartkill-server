@@ -1,10 +1,13 @@
 {% extends 'SmartkillWebBundle::layout.html.twig' %}
 {% form_theme form 'SmartkillWebBundle:Form:horizontal.html.twig' %}
+{% import 'SmartkillWebBundle:Profile:macros.html.twig' as macros %}
 
 {% block title %}SmartKill - Zmień awatar{% endblock %}
 
 {% block content %}
-
+	
+	{{ macros.menu('edit') }}
+	
 	<div class="block">
 		<div class="row-fluid">
 			<div class="span7">
@@ -13,7 +16,12 @@
 				<form action="{{ app.request.getRequestUri }}" method="post" {{ form_enctype(form) }} class="form-horizontal">
 					{{ form_row(form.avatarFile) }}
 					{{ form_rest(form) }}
-					<button class="btn btn-primary btn-large pull-right" type="submit">Zapisz</button>
+					
+					<div class="pull-right">
+						<a href="{{ path('profile_edit') }}">Anuluj</a>
+						<span class="muted">lub</span>
+						<button class="btn btn-primary btn-large" type="submit">Zapisz</button>
+					</div>
 				</form>
 			</div>
 			<div class="span4 pull-right">

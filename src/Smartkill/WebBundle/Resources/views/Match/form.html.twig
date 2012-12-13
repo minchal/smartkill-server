@@ -46,7 +46,7 @@
 					<br />
 					<div class="pull-right">
 						{% if isEditForm %}
-							<a href="{{ path('match_show',{id:entity.id}) }}">Anuluj</a>
+							<a href="{{ path('match',{id:entity.id}) }}">Anuluj</a>
 							<span class="muted">lub</span>
 						{% endif %}
 						<button class="btn btn-primary btn-large" type="submit">Zapisz</button>
@@ -58,6 +58,8 @@
 						{{ form_row(form.size) }}
 						
 						<div id="map" class="map-canvas" style="height: 250px;"></div>
+						
+						<div class="alert alert-info">Przeciągaj znacznik, aby zmienić lokalizację gry.</div>
 					</fieldset>
 				</div>
 			</div>

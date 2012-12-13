@@ -1,10 +1,13 @@
 {% extends 'SmartkillWebBundle::layout.html.twig' %}
 {% form_theme form 'SmartkillWebBundle:Form:horizontal.html.twig' %}
+{% import 'SmartkillWebBundle:Profile:macros.html.twig' as macros %}
 
 {% block title %}SmartKill - Edytuj profil{% endblock %}
 
 {% block content %}
 
+	{{ macros.menu('edit') }}
+	
 	<div class="block">
 		<h2>Edytuj profil</h2>
 		
@@ -23,14 +26,18 @@
 						{{ form_widget(form) }}
 					</fieldset>
 					
-					<button class="btn btn-primary btn-large pull-right" type="submit">Zapisz</button>
+					<div class="pull-right">
+						<a href="{{ path('profile') }}">Anuluj</a>
+						<span class="muted">lub</span>
+						<button class="btn btn-primary btn-large" type="submit">Zapisz</button>
+					</div>
 				</form>
 			</div>
 			<div class="span4 pull-right">
 				<div class="thumbnail">
 					<img src="{{ entity.getAvatarUrl | imagine_filter('avatar_large') }}" />
 					<div class="caption pull-center">
-						<a href="{{ path('avatar') }}" class="btn"><i class="icon-user"></i> Zmień avatar</a>
+						<a href="{{ path('profile_avatar') }}" class="btn"><i class="icon-user"></i> Zmień avatar</a>
 					</div>
 				</div>
 			</div>

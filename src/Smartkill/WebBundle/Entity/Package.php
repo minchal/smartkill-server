@@ -55,24 +55,20 @@ class Package {
 		return array('time','shield','snipe','switch');
 	}
 	
-	const SCALE = 1000;
+	const SCALE = 100000;
 	
+	/**
+	 * @see http://stackoverflow.com/questions/5837572/generate-a-random-point-within-a-circle-uniformly#comment6709997_5838055
+	 * @see http://www.movable-type.co.uk/scripts/latlong.html : Destination point given distance and bearing from start point
+	 */
 	public static function createRandom($lat, $lng, $r, $types) {
 		$pkg = new self();
 		
-		$d = rand(0, $r * self::SCALE) / self::SCALE;
 		$a = rand(0, pi()*2 * self::SCALE) / self::SCALE;
+		$d = $r * sqrt(rand(0, self::SCALE) / self::SCALE);
 		
 		// promień ziemi w metrach
 		$R = 6371000;
-		
-		/*
-		http://www.movable-type.co.uk/scripts/latlong.html
-		var lat2 = Math.asin( Math.sin(lat1)*Math.cos(d/R) + 
-					  Math.cos(lat1)*Math.sin(d/R)*Math.cos(brng) );
-		var lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(d/R)*Math.cos(lat1), 
-							 Math.cos(d/R)-Math.sin(lat1)*Math.sin(lat2));
-		*/
 		
 		$lat = deg2rad($lat);
 		$lng = deg2rad($lng);

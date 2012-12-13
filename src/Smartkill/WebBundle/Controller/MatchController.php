@@ -37,11 +37,15 @@ class MatchController extends Controller {
 		$repository = $em->getRepository('SmartkillWebBundle:Match');
 		
 		$query = $repository->createQueryBuilder('m')
+			// tylko planowane lub trwające
+			->andWhere('m.status IN(?1)')->setParameter(1, array(Match::PLANED,Match::GOINGON))
+			// tylko z dzisiaj i późniejsze
+			->andWhere('m.dueDate > ?2')->setParameter(2, new \DateTime('midnight'))
 			->orderBy('m.dueDate','ASC')
-			->getQuery();
+		;
 		
 		try {
-			$pager = new Pagerfanta(new DoctrineORMAdapter($query));
+			$pager = new Pagerfanta(new DoctrineORMAdapter($query->getQuery()));
 			
 			$pager
 				->setMaxPerPage(20)
@@ -55,7 +59,7 @@ class MatchController extends Controller {
 		));
 	}
 
-    public function showAction($id) {
+    public function detailsAction($id) {
 		$em = $this->getDoctrine()->getManager();
 		$mu = $em->getRepository('SmartkillWebBundle:MatchUser');
 		
@@ -75,7 +79,7 @@ class MatchController extends Controller {
 			$joined = $mu->find(array('user'=>$this->getUser()->getId(), 'match'=>$match->getId()));
 		}
 		
-		return $this->render('SmartkillWebBundle:Match:show.html.twig', array(
+		return $this->render('SmartkillWebBundle:Match:details.html.twig', array(
 			'entity'      => $match,
 			'joined'	  => $joined,
 			'canManage'	  => $this->canManage($match, $this->getUser()),
@@ -83,7 +87,6 @@ class MatchController extends Controller {
 			'hunters'     => $mu -> findBy(array('match'=>$match,'type'=>MatchUser::TYPE_HUNTER)),
 			'joinForm'    => $this->createJoinForm($match->getId())->createView(),
 			'deleteForm'  => $this->createDeleteForm($match->getId())->createView(),
-			'random' => Package::createRandom($match->getLat(), $match->getLng(), $match->getSize(), Package::getTypes())
 		));
     }
 	
@@ -155,7 +158,7 @@ class MatchController extends Controller {
 					'Zmiany w ustawieniach meczu zostały zapisane!'
 				);
 				
-				return $this->redirect($this->generateUrl('match_show',array('id'=>$entity->getId())));
+				return $this->redirect($this->generateUrl('match',array('id'=>$entity->getId())));
 			}
 		}
 		
@@ -183,7 +186,7 @@ class MatchController extends Controller {
 		
 		if ($form->isValid()) {
 			if (!$request->get('yes')) {
-				return $this->redirect($this->generateUrl('match_show', array('id'=>$entity->getId())));
+				return $this->redirect($this->generateUrl('match', array('id'=>$entity->getId())));
 			}
 			
 			$em->remove($entity);

@@ -1,0 +1,17 @@
+
+{% macro menu(active) %}
+	<ul class="nav nav-tabs block-tabs">
+		<li{% if active=='index' %} class="active"{% endif %}>
+			<a href="{{ path('profile') }}">Przegląd</a>
+		</li>
+		<li{% if active=='matches' %} class="active"{% endif %}>
+			<a href="{{ path('profile_matches') }}">Organizowane mecze</a>
+		</li>
+		<li{% if active=='joined' %} class="active"{% endif %}>
+			<a href="{{ path('profile_joined') }}">Twoje mecze</a>
+		</li>
+		<li{% if active=='edit' %} class="active"{% endif %}>
+			<a href="{{ path('profile_edit') }}">Edytuj profil</a>
+		</li>
+	</ul>
+{% endmacro %}

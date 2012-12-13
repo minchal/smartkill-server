@@ -1,7 +1,8 @@
 {% extends 'SmartkillWebBundle::layout.html.twig' %}
-{% import 'SmartkillWebBundle:Match:macros.html.twig' as macros %}
+{% import 'SmartkillWebBundle:Profile:macros.html.twig' as macros %}
+{% import 'SmartkillWebBundle:Match:macros.html.twig' as listing %}
 
-{% block title %}SmartKill - Mecze{% endblock %}
+{% block title %}SmartKill - Organizowane mecze{% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
@@ -11,23 +12,24 @@
 
 {% block content %}
 
+	{{ macros.menu('matches') }}
+	
 	<div class="block">
-		<a href="{{ path('match_add') }}" class="btn btn-primary btn-large pull-right">Zaplanuj nowy mecz</a>
+		<a href="{{ path('match_add') }}" class="btn btn-large pull-right">Zaplanuj nowy mecz</a>
 		
-		<h2>Planowane mecze</h2>
+		<h2>Organizowane mecze</h2>
 		
 		{% if pager.currentPageResults.count == 0 %}
 			<div class="alert alert-info">
-				Obecnie nie są planowane ani rozgrywane żadne mecze.<br />
+				Nie utworzyłeś jeszcze żadnego meczu.
 				<strong>Może czas jakiś <a href="{{ path('match_add') }}">zorganizować</a>?</strong>
 			</div>
 		{% else %}
 			<div class="alert alert-info">
-				Poniższa lista prezentuje trwające oraz planowane w najbliższym czasie rogrywki.<br />
-				<strong>Przejdź do szczegółów danego meczu, aby zapisać się do niego jako gracz.</strong>
+				Poniższa lista prezentuje mecze, których jesteś organizatorem.
 			</div>
 			
-			{{ macros.listing(pager.currentPageResults) }}
+			{{ listing.listing(pager.currentPageResults) }}
 			{{ pagerfanta(pager) }}
 		{% endif %}
 	</div>

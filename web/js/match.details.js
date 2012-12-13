@@ -92,12 +92,7 @@ $(function(){
 	
 	try {
 		// mapa obszaru
-		var m = showCircleMap('map', $map.data('lat'), $map.data('lng'), $map.data('size'));
-		
-		var marker = new google.maps.Marker({
-			position: new google.maps.LatLng($map.data('lat2'), $map.data('lng2'), true), 
-			map: m
-		});
+		showCircleMap('map', $map.data('lat'), $map.data('lng'), $map.data('size'));
 	} catch (e) {
 		console.log(e);
 	}

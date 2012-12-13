@@ -8,18 +8,22 @@
 		<h2>Ranking</h2>
 		
 		<table class="table table-striped table-bordered">
+			<colgroup width="20px" align="right" />
 			<colgroup />
 			<colgroup span="2" width="150px" align="right" />
 			<thead>
 				<tr>
+					<th>#</th>
 					<th>Gracz</th>
 					<th><div rel="tooltip" title="Razem / Jako ofiara / Jako łowca">Punkty</div></th>
 					<th><div rel="tooltip" title="Razem / Jako ofiara / Jako łowca">Mecze</div></th>
 				</tr>
 			</thead>
 			<tbody>
-			{% for entity in pager.currentPageResults %}
+			{% for row in pager.currentPageResults %}
+				{% set entity = row[0] %}
 				<tr>
+					<td>{{ row['position'] }}</td>
 					<td>
 						<a class="table-user" href="{{ path('user', {username: entity.username}) }}">
 							<img src="{{ entity.getAvatarUrl | imagine_filter('avatar_xsmall') }}" />{{ entity.username }}

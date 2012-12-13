@@ -28,7 +28,7 @@ class MatchType extends AbstractType
             ))
             ->add('length', 'choice', array(
             	'label'=>'Czas trwania:', 
-            	'choices' => array('30'=>'30 min.','60'=>'1 godz.','120'=>'2 godz.','180'=>'3 godz.')
+            	'choices' => array('30'=>'30 minut','60'=>'60 minut','90'=>'90 minut','120'=>'2 godz.','180'=>'3 godz.','300'=>'5 godz.','720'=>'12 godz.','1440'=>'Cały dzień')
             ))
             ->add('size', 'choice', array(
             	'label'=>'Promień terytorium:', 
@@ -44,7 +44,7 @@ class MatchType extends AbstractType
             
             ->add('density', 'choice', array(
             	'label'=>'Ilość paczek:', 
-            	'choices' => array(0=>'Bez paczek',5=>'Mało (5/km²)',10=>'Średnio (10/km²)',20=>'Dużo (20/km²)',50=>'OMFG! One są wszędzie! (50/km²)')
+            	'choices' => array(0=>'Bez paczek',5=>'Mało (5/km²)',10=>'Średnio (10/km²)',20=>'Dużo (20/km²)',50=>'OMG! One są wszędzie! (50/km²)')
             ))
             ->add('pkgTime',   'checkbox', array('required'=>false, 'label'=>'Czasówki'))
             ->add('pkgShield', 'checkbox', array('required'=>false, 'label'=>'Tarcze'))
