@@ -81,6 +81,10 @@
 						<td><strong>Lokalizacja:</strong></td>
 						<td>Lat: {{ entity.lat }}, Lng: {{ entity.lng }}, R={{ entity.size }}</td>
 					</tr>
+					<tr>
+						<td><strong>Paczki:</strong></td>
+						<td>{{ entity.density }}/km² ({{ entity.getPackagesString}})</td>
+					</tr>
 				</table>
 				
 				{% if entity.descr %}
@@ -105,7 +109,10 @@
 						<a href="{{ path('user', { username: mu.user.username }) }}">
 							<img src="{{ mu.user.getAvatarUrl | imagine_filter('avatar_small') }}" alt="" />
 							{{ mu.user.username }}
-							<div class="user-points"><div rel="tooltip" title="Zdobyte&nbsp;punkty">5</div></div>
+							<div class="user-points"><div rel="tooltip" title="Zdobyte&nbsp;punkty">{{ mu.pointsPrey+mu.pointsHunter }}</div></div>
+							{% if mu.disqualification %}
+								<div class="user-disqualification" rel="tooltip" title="Zdyskwalifikowany"></div>
+							{% endif %}
 						</a>
 					</div>
 				{% endmacro %}

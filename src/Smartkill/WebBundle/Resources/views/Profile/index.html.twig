@@ -52,11 +52,10 @@
 						data-lat="{{ match.lat }}" data-lng="{{ match.lng }}" data-size="{{ match.size }}"
 					></div>
 					
-					TODO
+					<strong>Data:</strong> {{ match.dueDate|date('Y-m-d H:i') }},
+					<strong>Graczy:</strong> {{ match.players.count }} / {{ match.maxPlayers }}
 					
-					{{ match.dueDate|date('Y-m-d H:i') }} {{ match.players.count }} / {{ match.maxPlayers }}
-					
-					<a class="btn btn-small" href="{{ path('match', { 'id': match.id }) }}"><i class="icon-eye-open"></i> Szczegóły</a>
+					<a class="btn btn-small pull-right" style="margin-top: -4px" href="{{ path('match', { 'id': match.id }) }}"><i class="icon-eye-open"></i> Szczegóły</a>
 				{% endif %}
 			</div>
 			<div class="span4">

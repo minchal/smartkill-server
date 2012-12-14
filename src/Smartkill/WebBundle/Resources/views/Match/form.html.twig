@@ -21,7 +21,7 @@
 						<legend>Informacje podstawowe</legend>
 						{{ form_row(form.name) }}
 						{{ form_row(form.descr, {attr:{rows:6}}) }}
-						{{ form_row(form.dueDate) }}
+						{{ form_row(form.dueDate, {help:'Wybierz planowaną datę rozpoczęcia. Pamiętaj, że jako ogranizator decydujesz, kiedy dokładnie mecz się rozpocznie.'}) }}
 						{{ form_row(form.length, {attr:{class:'span6'}}) }}
 						{{ form_row(form.maxPlayers, {attr:{class:'span6'}}) }}
 						
@@ -29,7 +29,7 @@
 						<div class="alert alert-info">Jeśli nie chcesz zmieniać obecnego hasła, pozostaw pole puste.</div>
 						{% endif %}
 						
-						{{ form_row(form.password) }}
+						{{ form_row(form.password, {help:'Jeśli chcesz, żeby tylko niektórzy użytkownicy mogli zapisać się do meczu, ustaw hasło.'}) }}
 					</fieldset>
 					<fieldset>
 						<legend>Paczki</legend>

@@ -25,11 +25,19 @@
 			<div class="container">
 				<div class="nav-collapse collapse">
 					{% if app.user %}
-						<p class="navbar-text pull-right">
-							Witaj <strong><a href="{{ path('user', {username: app.user.username}) }}" class="navbar-link">{{ app.user.username }}</a></strong> |
-							<a href="{{ path('profile') }}" class="navbar-link">Profil</a> |
-							<a href="{{ path('logout') }}" class="navbar-link">Wyloguj</a>
-						</p>
+						<ul class="nav pull-right">
+							<li>
+								<a href="{{ path('user', {username: app.user.username}) }}">
+									Witaj <strong>{{ app.user.username }}</strong>
+								</a>
+							</li>
+							<li{% if app.request.get('_route')|slice(0,7)=='profile' %} class="active"{% endif %}>
+								<a href="{{ path('profile') }}">Profil</a>
+							</li>
+							<li>
+								<a href="{{ path('logout') }}">Wyloguj</a>
+							</li>
+						</ul>
 					{% else %}
 						<form action="{{ path('login_check') }}" method="post" class="navbar-form pull-right">
 							<input type="text" name="_username" class="span2" placeholder="Login">
@@ -40,9 +48,15 @@
 					
 					<ul class="nav">
 						{% set r = app.request.get('_route') %}
-						<li{% if r=='index'   %} class="active"{% endif %}><a href="{{ path('index') }}">Strona główna</a></li>
-						<li{% if r=='matches' %} class="active"{% endif %}><a href="{{ path('matches') }}">Mecze</a></li>
-						<li{% if r=='ranking' %} class="active"{% endif %}><a href="{{ path('ranking') }}">Ranking</a></li>
+						<li{% if r=='index'   %} class="active"{% endif %}>
+							<a href="{{ path('index') }}">Strona główna</a>
+						</li>
+						<li{% if r=='matches' %} class="active"{% endif %}>
+							<a href="{{ path('matches') }}">Mecze</a>
+						</li>
+						<li{% if r=='ranking' %} class="active"{% endif %}>
+							<a href="{{ path('ranking') }}">Ranking</a>
+						</li>
 					</ul>
 				</div>
 			</div>

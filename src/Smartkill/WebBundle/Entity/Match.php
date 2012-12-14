@@ -189,6 +189,29 @@ class Match {
     {
     	return $this->getCreatedBy() ? $this->getCreatedBy()->getId() : null;
     }
+	
+	public function getPackagesTypes() {
+		$types = array();
+		
+		foreach (Package::getTypes() as $type) {
+			$m = 'getPkg'.ucfirst($type);
+			if ($this->$m()) {
+				$types[] = $type;
+			}
+		}
+		
+		return $types;
+	}
+	
+	public function getPackagesString() {
+		$types = $this->getPackagesTypes();
+		
+		foreach ($types as $i => $type) {
+			$types[$i] = $type;
+		}
+		
+		return implode(', ', $types);
+	}
     
     /**
      * Rozpoczęcie mecz:
@@ -219,25 +242,12 @@ class Match {
 		$em -> flush();
 	}
 	
-	private function getPackagesTypes() {
-		$types = array();
-		
-		foreach (Package::getTypes() as $type) {
-			$m = 'getPkg'.ucfirst($type);
-			if ($this->$m()) {
-				$types[] = $type;
-			}
-		}
-		
-		return $types;
-	}
-	
 	/**
 	 * Zakończenie meczu:
 	 *  - zmiana statusu
 	 *  - dodanie użytkownikom zdobytych punktów
 	 */
-	public function finish() {
+	public function finish(EntityManager $em) {
 		if ($this->status != self::GOINGON) {
 			throw new \LogicException('Pylko trwający mecz może zostać zakończony!');
 		}
@@ -245,8 +255,19 @@ class Match {
 		$this->status = self::FINISHED;
 		$em -> persist($this);
 		
-		
-		
+		foreach($this->getPlayers() as $mu) {
+			$u = $mu -> getUser();
+			$u -> setPointsHunter($u->getPointsHunter() + $mu->getPointsHunter());
+			$u -> setPointsPrey($u->getPointsPrey() + $mu->getPointsPrey());
+			
+			if ($mu->getType() == MatchUser::TYPE_HUNTER) {
+				$u -> setMatchesHunter($u->getMatchesHunter() + 1);
+			} else if ($mu->getType() == MatchUser::TYPE_PREY) {
+				$u -> setMatchesPrey($u->getMatchesPrey() + 1);
+			}
+			
+			$em -> persist($u);
+		}
 		
 		$em -> flush();
 	}

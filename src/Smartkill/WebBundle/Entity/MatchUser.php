@@ -59,6 +59,16 @@ class MatchUser {
     private $updatedAt;
 
     /**
+    * @ORM\Column(name="points_prey", type="integer")
+    */
+    private $pointsPrey = 0;
+    
+    /**
+     * @ORM\Column(name="points_hunter", type="integer")
+     */
+    private $pointsHunter = 0;
+	
+    /**
      * Set type
      *
      * @param string $type
@@ -240,5 +250,51 @@ class MatchUser {
     public function getMatch()
     {
         return $this->match;
+    }
+
+    /**
+     * Set pointsPrey
+     *
+     * @param integer $pointsPrey
+     * @return MatchUser
+     */
+    public function setPointsPrey($pointsPrey)
+    {
+        $this->pointsPrey = $pointsPrey;
+    
+        return $this;
+    }
+
+    /**
+     * Get pointsPrey
+     *
+     * @return integer 
+     */
+    public function getPointsPrey()
+    {
+        return $this->pointsPrey;
+    }
+
+    /**
+     * Set pointsHunter
+     *
+     * @param integer $pointsHunter
+     * @return MatchUser
+     */
+    public function setPointsHunter($pointsHunter)
+    {
+        $this->pointsHunter = $pointsHunter;
+    
+        return $this;
+    }
+
+    /**
+     * Get pointsHunter
+     *
+     * @return integer 
+     */
+    public function getPointsHunter()
+    {
+        return $this->pointsHunter;
     }
 }
