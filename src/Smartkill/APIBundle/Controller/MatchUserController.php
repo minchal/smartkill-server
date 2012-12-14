@@ -2,48 +2,52 @@
 
 namespace Smartkill\APIBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\NoResultException;
 
 class MatchUserController extends Controller {
 	
     public function positionAction() {
     	$session = $this->checkSession();
-		if ($session instanceof Response) {
-			return $session;
+    	
+		if (!$session) {
+			return $this->sessionNotFound();
 		}
 		
 		$request = $this -> getRequest();
 		
-		$user  = $request->request->get('user');
-		$match = $request->request->get('match');
-		$lat   = $request->request->get('lat');
-		$lng   = $request->request->get('lng');
+		$user  = $request->get('user');
+		$match = $request->get('match');
+		$lat   = $request->get('lat');
+		$lng   = $request->get('lng');
 		
 		// aktualizacja pozycji użytkownika
 		if (!$this->updatePositionAction($user, $match, $lat, $lng)) {
-			return $this -> jsonResponse(array('msg'=>'User invalid'),'error');
+			return $this -> errorResponse('User invalid');
 		}
 		
-		$repository = $this->getDoctrine()->getRepository('SmartkillWebBundle:MatchUser');
-		$query = $repository->createQueryBuilder('mu')
+		$positions = $this->getRepository('SmartkillWebBundle:MatchUser')
+			->createQueryBuilder('mu')
 			->where('mu.match = :match')
 			->setParameter('match', $match)
 			->orderBy('mu.user', 'ASC')
-			->getQuery();
-		$positions = $query->getResult();
+			->getQuery()
+			->getResult();
 		
 		if (!$positions) {
-			return $this -> jsonResponse(array('msg'=>'Match invalid'),'error');
+			return $this -> errorResponse('Match invalid');
 		}
 		
-		$serializer = $this->get('serializer');
-		return $this -> jsonResponse($serializer->serialize(array('status' => 'success', 'positions'=>$positions), 'json'));
+		return $this -> jsonResponse(array('positions'=>$positions));
     }
     
     public function updatePositionAction($user, $match, $lat, $lng) {
-    	$em = $this->getDoctrine()->getManager();
+		$session = $this->checkSession();
+    	
+		if (!$session) {
+			return $this->sessionNotFound();
+		}
+		
+    	$em = $this->getManager();
     	
     	try {
 	    	$query = $em->getRepository('SmartkillWebBundle:MatchUser')->createQueryBuilder('mu')
@@ -71,25 +75,27 @@ class MatchUserController extends Controller {
 	
 	public function isJoinedAction() {
 		$session = $this->checkSession();
-		if ($session instanceof Response) {
-			return $session;
+    	
+		if (!$session) {
+			return $this->sessionNotFound();
 		}
 		
 		$request = $this->getRequest();
-	
-		$user  = $session->getUser();
-		$match = $request->request->get('match');
-	
-		$repository = $this->getDoctrine()->getRepository('SmartkillWebBundle:MatchUser');
-		$result = $repository->findOneBy(array('match' => $match, 'user' => $user->getId()));
 		
-		return $this -> jsonResponse(array('is_joined'=>($result ? true : false)));
+		$user  = $session->getUser();
+		$match = $request->get('match');
+		
+		$result = $this->getRepository('SmartkillWebBundle:MatchUser')
+			->findOneBy(array('match' => $match, 'user' => $user->getId()));
+		
+		return $this -> jsonResponse(array('is_joined'=> (boolean) $result));
 	}
 	
 	public function userGamesAction() {
 		$session = $this->checkSession();
-		if ($session instanceof Response) {
-			return $session;
+    	
+		if (!$session) {
+			return $this->sessionNotFound();
 		}
 		
 		$request = $this->getRequest();
@@ -105,34 +111,9 @@ class MatchUserController extends Controller {
 	    
 	    try {
 	    	$games = $query->getResult();
-	    	$serializer = $this->get('serializer');
-	    	return $this -> jsonResponse($serializer->serialize(array('status' => 'success', 'games'=>$games), 'json'));
+	    	return $this -> jsonResponse(array('status' => 'success', 'games'=>$games));
 	    } catch (NoResultException $e) {
-	    	return $this -> jsonResponse(array('msg'=>'List is empty'),'error');
+	    	return $this -> errorResponse('List is empty');
 	    }
-	}
-	
-	private function checkSession() {
-		$request = $this -> getRequest();
-		$repo = $this->getDoctrine()->getRepository('SmartkillAPIBundle:Session');
-		
-		$session = $repo -> findOneById($request->request->get('id'));
-		
-		if (!$session) {
-			return $this -> jsonResponse(array('msg'=>'Session not found'),'error');
-		}
-		
-		return $session;
-	}
-    
-    private function jsonResponse($args = array(), $status = 'success') {
-    	if (is_array($args)) {
-    		$args = json_encode(array('status' => $status) + $args);
-    	}
-    	
-		$response = new Response($args);
-		$response->headers->set('Content-Type', 'application/json');
-		
-		return $response;
 	}
 }
