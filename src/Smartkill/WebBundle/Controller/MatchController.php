@@ -118,7 +118,7 @@ class MatchController extends Controller {
 					'Mecz został pomyślnie utworzony!'
 				);
 				
-				return $this->redirect($this->generateUrl('match'));
+				return $this->redirect($this->generateUrl('match',array('id'=>$entity->getId())));
 			}
 		}
 		

@@ -3,14 +3,13 @@
 namespace Smartkill\WebBundle\Controller;
 
 use Smartkill\WebBundle\Entity\User;
+use Smartkill\WebBundle\Entity\Match;
 use Smartkill\WebBundle\Form\RegistrationType;
 use Smartkill\WebBundle\Form\ProfileType;
-use Smartkill\WebBundle\Form\UserType;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\FormError;
@@ -31,9 +30,28 @@ class ProfileController extends Controller {
 	}
 	
 	public function indexAction() {
+		$em = $this->getDoctrine()->getManager();
+		$repoUser  = $em->getRepository('SmartkillWebBundle:User');
+		$repoMatch = $em->getRepository('SmartkillWebBundle:Match');
+		
+		$user = $this->getUser();
+		
+		$query = $repoMatch->createQueryBuilder('m')
+			->innerJoin('m.players','p','WITH','p.user = :user')
+			->andWhere('m.status = :status')
+			->andWhere('m.dueDate > :date')
+			->orderBy('m.dueDate','ASC')
+			->setParameter('user', $this->getUser())
+			->setParameter('status', Match::PLANED)
+			->setParameter('date', new \DateTime())
+			->setMaxResults(1)
+			->getQuery()
+		;
 		
         return $this->render('SmartkillWebBundle:Profile:index.html.twig', array(
-        	'entity' => $this->getUser()
+        	'entity' => $user,
+        	'position' => $repoUser->getPosition($user),
+        	'match' => $query->getSingleResult(),
         ));
 	}
 	

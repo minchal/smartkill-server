@@ -1,7 +1,14 @@
 $(function(){
 	$('*[rel="tooltip"]').tooltip();
 	
-	
+	if(!Modernizr.inputtypes['datetime-local']){
+    	$('input[type=datetime-local]').datepicker({
+			format: 'yyyy-mm-ddThh:ii:ss',
+			weekStart: 1,
+			days: ["nd","pn","wt","śr","cz","pt","so"],
+			months: ["styczeń","luty","marzec","kwiecień","maj","czerwiec","lipiec","sierpień","wrzesień","październi","listopad","grudzień"]
+		});
+	};
 });
 
 function GMAPGuessZoom(r) {

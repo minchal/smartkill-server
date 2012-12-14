@@ -43,10 +43,12 @@ profile_avatar:
 profile_matches:
     pattern:  /profile/matches/{page}
     defaults: { _controller: SmartkillWebBundle:Profile:matches, page: 1, type: created }
+    requirements: { page: "\d+"}
     
 profile_joined:
     pattern:  /profile/joined/{page}
     defaults: { _controller: SmartkillWebBundle:Profile:matches, page: 1, type: joined }
+    requirements: { page: "\d+"}
 
 # przeglądanie użytkowników
 ranking:
@@ -57,7 +59,7 @@ ranking:
 user:
     pattern:  /user/{username}/{page}
     defaults: { _controller: SmartkillWebBundle:User:details, page: 1 }
-    requirements: { id: "\d+", page: "\d+"}
+    requirements: { page: "\d+"}
 
 # zarządzanie użytkownikami
 user_edit:

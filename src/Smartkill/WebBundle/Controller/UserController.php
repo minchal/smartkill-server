@@ -4,7 +4,6 @@ namespace Smartkill\WebBundle\Controller;
 
 use Smartkill\WebBundle\Entity\User;
 use Smartkill\WebBundle\Form\RegistrationType;
-use Smartkill\WebBundle\Form\ProfileType;
 use Smartkill\WebBundle\Form\UserType;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -100,14 +99,8 @@ class UserController extends Controller {
 			throw $this->createNotFoundException();
 		}
 		
-		$pos = $repository->createQueryBuilder('u')
-			->select('COUNT(u.id)+1')
-			->where('u.pointsPrey + u.pointsHunter > ?1')
-			->setParameter(1, $user->getPointsSum())
-			->getQuery();
-		
         return $this->render('SmartkillWebBundle:User:details.html.twig', array(
-        	'position'    => $pos->getSingleScalarResult(),
+        	'position'    => $repository->getPosition($user),
         	'entity'      => $user,
         	'pager'       => $pager,
 			'deleteForm'  => $this->createDeleteForm($user->getId())->createView(),

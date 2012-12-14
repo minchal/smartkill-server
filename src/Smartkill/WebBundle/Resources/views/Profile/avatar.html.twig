@@ -9,10 +9,10 @@
 	{{ macros.menu('edit') }}
 	
 	<div class="block">
+		<h2>Zmień awatar</h2>
+		
 		<div class="row-fluid">
 			<div class="span7">
-				<h2>Zmień awatar</h2>
-				
 				<form action="{{ app.request.getRequestUri }}" method="post" {{ form_enctype(form) }} class="form-horizontal">
 					{{ form_row(form.avatarFile) }}
 					{{ form_rest(form) }}
@@ -25,7 +25,6 @@
 				</form>
 			</div>
 			<div class="span4 pull-right">
-				<h3>Obecny</h3>
 				<div class="thumbnail">
 					<img src="{{ entity.getAvatarUrl | imagine_filter('avatar_large') }}" />
 				</div>

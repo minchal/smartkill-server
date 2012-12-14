@@ -4,22 +4,24 @@ $(function(){
 	$input = $('#pass-input');
 	$error = $('#pass-error');
 	
-	$form.ajaxForm({
-		beforeSubmit: function() {
-			if (!$input.is(':visible') && $form.data('pass')) {
-				$input.slideDown();
-				return false;
+	if ($form.length && $form.ajaxForm) {
+		$form.ajaxForm({
+			beforeSubmit: function() {
+				if (!$input.is(':visible') && $form.data('pass')) {
+					$input.slideDown();
+					return false;
+				}
+				return true;
+			},
+			success: function(rsp) {
+				if (rsp.status == 'success') {
+					location.reload();
+				} else if (rsp.status == 'error') {
+					$error.stop().text(rsp.msg).fadeIn().delay(5000).fadeOut();
+				}
 			}
-			return true;
-		},
-		success: function(rsp) {
-			if (rsp.status == 'success') {
-				location.reload();
-			} else if (rsp.status == 'error') {
-				$error.stop().text(rsp.msg).fadeIn().delay(5000).fadeOut();
-			}
-		}
-	});
+		});
+	}
 	
 	// zarządzanie graczami
 	if ($('#players-manage').length) {
