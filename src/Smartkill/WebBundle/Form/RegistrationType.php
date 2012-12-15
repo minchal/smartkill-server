@@ -15,7 +15,7 @@ class RegistrationType extends AbstractType {
 			->add('username', 'text', array('label'=>'Login:'))
 			->add('email', 'email', array('label'=>'E-mail:'))
 			->add('password', 'repeated', array(
-				'invalid_message' => 'Podane hasła muszą być takie same.', // TODO: przenieść do tłumaczeń
+				'invalid_message' => 'Podane hasła muszą być takie same.',
 				'first_name' => 'password',
 				'second_name' => 'confirm',
 				'type' => 'password',

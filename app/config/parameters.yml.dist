@@ -13,3 +13,5 @@ parameters:
 
     locale:            pl
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    imagine_base_path: '/smartkill/app_dev.php'

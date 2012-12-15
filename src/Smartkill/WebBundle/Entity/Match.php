@@ -203,16 +203,6 @@ class Match {
 		return $types;
 	}
 	
-	public function getPackagesString() {
-		$types = $this->getPackagesTypes();
-		
-		foreach ($types as $i => $type) {
-			$types[$i] = $type;
-		}
-		
-		return implode(', ', $types);
-	}
-    
     /**
      * Rozpoczęcie mecz:
      *  - zablokowanie edycji (zmiana statusu)

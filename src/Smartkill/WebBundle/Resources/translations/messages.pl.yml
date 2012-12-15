@@ -1,0 +1,8 @@
+match planed: Planowany
+match goingon: Trwa
+match finished: Zakończony
+
+package time: Czasówki
+package shield: Tarcze
+package snipe: Lunety
+package switch: Zmiana ról

@@ -13,7 +13,7 @@ class ProfileType extends AbstractType {
 			->add('oldPassword', 'password', array('required'=>false, 'label'=>'Obecne hasło:'))
 			->add('password', 'repeated', array(
 				'required'=>false,
-				'invalid_message' => 'Podane hasła muszą być takie same.', // TODO: przenieść do tłumaczeń
+				'invalid_message' => 'Podane hasła muszą być takie same.',
 				'first_name' => 'password',
 				'second_name' => 'confirm',
 				'type' => 'password',

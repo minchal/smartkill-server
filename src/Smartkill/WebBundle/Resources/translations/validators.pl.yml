@@ -1,0 +1,3 @@
+
+This date should be {{ limit }} or greater.: Podana data powinna być późniejsza niż {{ limit }}.
+This date should be {{ limit }} or smaller.: Podana data powinna być wcześniejsza niż {{ limit }}.

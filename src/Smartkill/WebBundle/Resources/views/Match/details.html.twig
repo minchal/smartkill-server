@@ -59,7 +59,12 @@
 					<colgroup width="150px" />
 					<tr>
 						<td><strong>Status:</strong></td>
-						<td>{{ entity.getStatus }}</td>
+						<td>
+							{% if entity.status == 'goingon' %}
+								<i class="icon-fire"></i>
+							{% endif %}
+							{{ ('match ' ~ entity.status)|trans }}
+						</td>
 					</tr>
 					<tr>
 						<td><strong>Organizator:</strong></td>
@@ -83,7 +88,10 @@
 					</tr>
 					<tr>
 						<td><strong>Paczki:</strong></td>
-						<td>{{ entity.density }}/km² ({{ entity.getPackagesString}})</td>
+						<td>
+							{{ entity.density }}/km² 
+							({% for t in entity.getPackagesTypes %}{{ ('package ' ~ t)|trans }}{% if not loop.last %}, {% endif %}{% endfor %})
+						</td>
 					</tr>
 				</table>
 				
