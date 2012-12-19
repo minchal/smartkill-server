@@ -132,47 +132,30 @@ class MatchUserController extends Controller {
 		$request = $this->getRequest();
 		
 		$match = $request->get('match');
-		$user  = $session->getUser();
-		$user2 = $request->get('user');
 		$lat   = $request->get('lat');
 		$lng   = $request->get('lng');
+		$prey  = $session->getUser();
 		
 		$mu = $this->getRepository('SmartkillWebBundle:MatchUser')
-			->findOneBy(array('match' => $match, 'user' => $user));
+			->findOneBy(array('match' => $match, 'user' => $prey, 'type' => MatchUser::TYPE_PREY));
 		
 		$mu2 = $this->getRepository('SmartkillWebBundle:MatchUser')
-			->findOneBy(array('match' => $match, 'user' => $user2));
+			->findOneBy(array('match' => $match, 'user' => $request->get('user'), 'type' => MatchUser::TYPE_HUNTER));
 		
 		if (!$mu || !$mu2) {
 			return $this -> errorResponse('User not in match');
 		}
 		
-		if ($mu->getType() == $mu2->getType()) {
-			return $this -> errorResponse('Users roles equals');
-		}
+		$hunter = $mu2->getUser();
+		$match  = $mu2->getMatch();
 		
-		if ($mu->getType() == MatchUser::TYPE_HUNTER) {
-			$hunter = $mu->getUser();
-			$prey   = $mu2->getUser();
-		} else {
-			$hunter = $mu2->getUser();
-			$prey   = $mu->getUser();
-		}
-		
-		$event = $this->getRepository('SmartkillWebBundle:EventCatch')
-			->findOneBy(array('match' => $match, 'prey' => $prey, 'hunter' => $hunter));
-		 
-		if ($event) {
-			$event->setConfirmed(true);
-		} else {
-			$event = new EventCatch();
-			$event->getMatch($match);
-			$event->setHunter($hunter);
-			$event->setPrey($prey);
-			$event->setLat($lat);
-			$event->setLng($lng);
-			$event->setDate(new \DateTime());
-		}
+		$event = new EventCatch();
+		$event->setMatch($match);
+		$event->setHunter($hunter);
+		$event->setPrey($prey);
+		$event->setLat($lat);
+		$event->setLng($lng);
+		$event->setDate(new \DateTime());
 		
 		$em = $this->getManager();
 		$em->persist($event);

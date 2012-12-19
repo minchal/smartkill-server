@@ -23,12 +23,6 @@ class EventCatch extends Event {
     private $prey;
     
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $confirmed = false;
-    
-
-    /**
      * Set hunter
      *
      * @param \Smartkill\WebBundle\Entity\User $hunter
@@ -72,28 +66,5 @@ class EventCatch extends Event {
     public function getPrey()
     {
         return $this->prey;
-    }
-
-    /**
-     * Set confirmed
-     *
-     * @param boolean $confirmed
-     * @return EventCatch
-     */
-    public function setConfirmed($confirmed)
-    {
-        $this->confirmed = $confirmed;
-    
-        return $this;
-    }
-
-    /**
-     * Get confirmed
-     *
-     * @return boolean 
-     */
-    public function getConfirmed()
-    {
-        return $this->confirmed;
     }
 }
