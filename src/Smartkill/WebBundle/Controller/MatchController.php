@@ -197,7 +197,7 @@ class MatchController extends Controller {
 				'Mecz został usunięty!'
 			);
 			
-			return $this->redirect($this->generateUrl('match'));
+			return $this->redirect($this->generateUrl('matches'));
 		}
 		
         return $this->render('SmartkillWebBundle:Form:question.html.twig', array(

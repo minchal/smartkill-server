@@ -12,7 +12,7 @@
 			</div>
 			<form action="{{ app.request.getRequestUri }}" method="post" class="pull-right">
 				<button class="btn btn-large" type="submit">Nie</button>
-				<button class="btn btn-primary btn-large" type="submit" name="yes">Tak</button>
+				<button class="btn btn-primary btn-large" type="submit" name="yes" value="1">Tak</button>
 				
 				{{ form_rest(form) }}
 			</form>
@@ -36,7 +36,7 @@
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-large" data-dismiss="modal" >Nie</button>
-			<button class="btn btn-primary btn-large" type="submit" name="yes">Tak</button>
+			<button class="btn btn-primary btn-large" type="submit" name="yes" value="1">Tak</button>
 		</div>
 	</form>
 	

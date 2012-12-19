@@ -5,7 +5,7 @@ namespace Smartkill\WebBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints as Assert;
-use JMS\SerializerBundle\Annotation\Accessor;
+use JMS\SerializerBundle\Annotation;
 
 /**
  * Uwaga: ta tabela wyjątkowo nazywa się "matches" bo "match" to słowo kluczowe MYSQL!!!
@@ -102,22 +102,25 @@ class Match {
     /**
      * @ORM\ManyToOne(targetEntity="Smartkill\WebBundle\Entity\User", inversedBy="createdMatches")
      * @ORM\JoinColumn(name="created_by", referencedColumnName="id")
-     * @Accessor(getter="getCreatedById")
+     * @Annotation\Accessor(getter="getCreatedById")
      */
     private $createdBy;
 	
     /**
      * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\MatchUser", mappedBy="match", cascade="remove")
+     * @Annotation\Exclude
      */
     private $players;
     
     /**
      * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\Event", mappedBy="match", cascade="remove")
+     * @Annotation\Exclude
      */
     private $events;
     
     /**
      * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\Package", mappedBy="match", cascade="remove")
+     * @Annotation\Exclude
      */
     private $packages;
     
