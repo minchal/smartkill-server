@@ -11,7 +11,7 @@ class UserController extends Controller {
     public function loginAction() {
 		$request = $this -> getRequest();
 		
-		$user = $this->getRepositiory('SmartkillWebBundle:User')
+		$user = $this->getRepository('SmartkillWebBundle:User')
 			->findOneByUsername($request->get('username'));
 		
 		if (!$user) {

@@ -3,6 +3,7 @@
 namespace Smartkill\WebBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\SerializerBundle\Annotation;
 
 /**
  * @ORM\Entity
@@ -18,6 +19,7 @@ class MatchUser {
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Smartkill\WebBundle\Entity\User", inversedBy="playedMatches")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * @Annotation\Accessor(getter="getUserId")
      */
     protected $user;
     
@@ -25,6 +27,7 @@ class MatchUser {
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Smartkill\WebBundle\Entity\Match", inversedBy="players")
      * @ORM\JoinColumn(name="match_id", referencedColumnName="id")
+     * @Annotation\Accessor(getter="getMatchId")
      */
     private $match;
     
@@ -68,6 +71,16 @@ class MatchUser {
      */
     private $pointsHunter = 0;
 	
+    public function getUserId()
+    {
+    	return $this->getUser() ? $this->getUser()->getId() : null;
+    }
+    
+    public function getMatchId()
+    {
+    	return $this->getMatch() ? $this->getMatch()->getId() : null;
+    }
+    
     /**
      * Set type
      *

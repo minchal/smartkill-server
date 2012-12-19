@@ -21,3 +21,7 @@ api_isJoined:
 api_userGames:
     pattern:  /userGames
     defaults: { _controller: SmartkillAPIBundle:MatchUser:userGames }
+    
+api_killUser:
+    pattern:  /killUser
+    defaults: { _controller: SmartkillAPIBundle:MatchUser:killUser }

@@ -108,7 +108,7 @@ class Match {
 	
     /**
      * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\MatchUser", mappedBy="match", cascade="remove")
-     * @Annotation\Exclude
+     * @Annotation\Accessor(getter="getPlayersInfo")
      */
     private $players;
     
@@ -263,6 +263,10 @@ class Match {
 		}
 		
 		$em -> flush();
+	}
+	
+	public function getPlayersInfo() {
+		return array('count' => $this->getPlayers()->count());
 	}
     
     /**

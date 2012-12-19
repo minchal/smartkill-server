@@ -14,7 +14,7 @@ class Controller extends SfController {
 		return $this->getDoctrine()->getManager();
 	}
 	
-	protected function getRepositiory($repo) {
+	protected function getRepository($repo) {
 		return $this->getDoctrine()->getRepository($repo);
 	}
 	

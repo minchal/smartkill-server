@@ -25,6 +25,6 @@ class MatchController extends Controller {
 			return $this -> errorResponse('Matches not found');
 		}
 		
-		return $this -> jsonResponse(array('status' => 'success', 'matches'=>$matches));
+		return $this -> jsonResponse(array('matches'=>$matches));
     }
 }
