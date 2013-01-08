@@ -20,20 +20,20 @@ class MatchUserController extends Controller {
 		
 		$request = $this -> getRequest();
 		
-		$user  = $request->get('user');
 		$match = $request->get('match');
 		$lat   = $request->get('lat');
 		$lng   = $request->get('lng');
 		
 		// aktualizacja pozycji użytkownika
-		if (!$this->updatePositionAction($user, $match, $lat, $lng)) {
+		if (!$this->updatePositionAction($session->getUser(), $match, $lat, $lng)) {
 			return $this -> errorResponse('User invalid');
 		}
 		
 		$positions = $this->getRepository('SmartkillWebBundle:MatchUser')
 			->createQueryBuilder('mu')
-			->where('mu.match = :match')
+			->where('mu.match = :match AND NOT mu.user = :user')
 			->setParameter('match', $match)
+			->setParameter('user', $session->getUser())
 			->orderBy('mu.user', 'ASC')
 			->getQuery()
 			->getResult();

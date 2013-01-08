@@ -32,7 +32,7 @@ class UserController extends Controller {
 		$em->persist($session);
 		$em->flush();
 		
-		return $this -> jsonResponse(array('id'=>$session->getId()));
+		return $this -> jsonResponse(array('id'=>$session->getId(),'user'=>$user));
     }
     
     public function logoutAction() {
@@ -48,4 +48,21 @@ class UserController extends Controller {
 		
 		return $this -> jsonResponse();
     }
+    
+    public function profileAction() {
+		$session = $this->checkSession();
+		
+		if (!$session) {
+			return $this -> sessionNotFound();
+		}
+		
+		$user = $this->getRepository('SmartkillWebBundle:User')
+			->find($this->getRequest()->get('user'));
+		
+		if (!$user) {
+			return $this -> errorResponse('User not found');
+		}
+		
+		return $this -> jsonResponse($user);
+	}
 }

@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use JMS\SerializerBundle\Annotation;
 
 /**
  * @ORM\Entity
@@ -36,15 +37,20 @@ class User implements UserInterface {
     
     /**
      * @ORM\Column(type="string", length=32)
+     * @Annotation\Exclude
      */
     private $salt;
     
     /**
      * @ORM\Column(type="string", length=128)
      * @Assert\MinLength(limit=5)
+     * @Annotation\Exclude
      */
     private $password;
     
+    /**
+     * @Annotation\Exclude
+     */
     public $oldPassword;
     
     /**
@@ -101,16 +107,19 @@ class User implements UserInterface {
     
     /**
      * @ORM\OneToMany(targetEntity="Smartkill\APIBundle\Entity\Session", mappedBy="user", cascade="remove")
+     * @Annotation\Exclude
      */
     protected $sessions;
     
     /**
      * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\Match", mappedBy="createdBy", cascade="remove")
+     * @Annotation\Exclude
      */
     protected $createdMatches;
     
     /**
      * @ORM\OneToMany(targetEntity="Smartkill\WebBundle\Entity\MatchUser", mappedBy="user", cascade="remove")
+     * @Annotation\Exclude
      */
     protected $playedMatches;
 	
