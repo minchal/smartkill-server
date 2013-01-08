@@ -140,7 +140,7 @@ class MatchUserController extends Controller {
 			->findOneBy(array('match' => $match, 'user' => $prey, 'type' => MatchUser::TYPE_PREY));
 		
 		$mu2 = $this->getRepository('SmartkillWebBundle:MatchUser')
-			->findOneBy(array('match' => $match, 'user' => $request->get('user'), 'type' => MatchUser::TYPE_HUNTER));
+			->findOneBy(array('match' => $match, 'user' => $request->get('hunter'), 'type' => MatchUser::TYPE_HUNTER));
 		
 		if (!$mu || !$mu2) {
 			return $this -> errorResponse('User not in match');
