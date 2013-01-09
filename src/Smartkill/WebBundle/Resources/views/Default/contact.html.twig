@@ -18,7 +18,8 @@
 				{{ form_row(form.email) }}
 				{{ form_row(form.subject) }}
 				{{ form_row(form.msg, {attr:{rows:8}}) }}
-					
+				{{ form_rest(form) }}
+				
 				<button class="btn btn-primary btn-large pull-right" type="submit">Wyślij</button>
 			</form>
 		</div>
