@@ -21,6 +21,10 @@ class DefaultController extends Controller {
         return $this->render('SmartkillWebBundle:Default:index.html.twig', $vars);
     }
     
+    public function staticAction($template) {
+        return $this->render('SmartkillWebBundle:Default:'.$template.'.html.twig');
+    }
+    
     public function contactAction() {
     	$request = $this->getRequest();
     	$contact = array('name'=>'','email'=>'','subject'=>'','msg'=>'');
@@ -35,20 +39,17 @@ class DefaultController extends Controller {
     			$message = \Swift_Message::newInstance()
 		            ->setSubject('Smartkill - Kontakt')
 		            ->setFrom('web@smartkill.pl')
-		            ->setTo($this->container->getParameter('contact_address'))
+		            ->setTo('michal@pawlowski.be')
 		            ->setBody($this->renderView('SmartkillWebBundle:Default:contactEmail.txt.twig', array('contact' => $contact)));
+		        
 		        $this->get('mailer')->send($message);
 		        
-		        $this->get('session')->setFlash('notice', 'Wiadomość została wysłana. Dziękujemy!');
+		        $this->get('session')->setFlash('success', 'Wiadomość została wysłana. Dziękujemy!');
 		        
 		        return $this->redirect($this->generateUrl('contact'));
     		}
     	}
     	
     	return $this->render('SmartkillWebBundle:Default:contact.html.twig', array('form' => $form->createView()));
-    }
-    
-    public function staticAction($template) {
-        return $this->render('SmartkillWebBundle:Default:'.$template.'.html.twig');
     }
 }
