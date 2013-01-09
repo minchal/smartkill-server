@@ -13,9 +13,18 @@ class DefaultController extends Controller {
     public function indexAction() {
 		$vars = array();
 		
-		if (!$this->getUser()) {
-			$form = $this->createForm(new RegistrationType(), new User());
-			$vars = array('form' => $form->createView());
+		if ($this->getUser()) {
+			$em   = $this->getDoctrine()->getManager();
+			$user = $this -> getUser();
+			
+			$vars = array(
+				'entity'   => $user,
+				'position' => $em->getRepository('SmartkillWebBundle:User')->getPosition($user)
+			);
+		} else {
+			$vars = array(
+				'form' => $this->createForm(new RegistrationType(), new User())->createView()
+			);
 		}
 		
         return $this->render('SmartkillWebBundle:Default:index.html.twig', $vars);

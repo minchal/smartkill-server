@@ -36,6 +36,30 @@
 					
 					<button class="btn btn-primary btn-large pull-right" type="submit">Zarejestruj mnie!</button>
 				</form>
+			{% else %}
+				<h2>Twój profil</h2>
+				<table class="table table-bordered">
+					<colgroup width="20px" align="center" />
+					<colgroup align="right" span="3" />
+					<thead>
+						<tr>
+							<th><div rel="tooltip" title="Miejsce w rankingu">#</div></th>
+							<th>Punkty</th>
+							<th>Jako łowca</th>
+							<th>Jako ofiara</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>{{ position }}</td>
+							<td><strong>{{ entity.pointsPrey + entity.pointsHunter }}</strong></td>
+							<td>{{ entity.pointsPrey }} (meczy: {{ entity.matchesPrey }})</td>
+							<td>{{ entity.pointsHunter }} (meczy: {{ entity.matchesHunter }})</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<a href="{{ path('profile') }}" class="btn btn-large btn-primary pull-right">Więcej</a>
 			{% endif %}
 		</div>
 	</div>
