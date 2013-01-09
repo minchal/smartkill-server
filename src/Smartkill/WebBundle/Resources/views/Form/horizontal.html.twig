@@ -7,11 +7,15 @@
 
 {% block field_errors %}
 	{% spaceless %}
-	  {% if errors is defined and errors|length > 0 %}
-		{% for error in errors %}
-		  <span class="help-inline error">{{ error.messageTemplate|trans(error.messageParameters, 'validators') }}</span>
-		{% endfor %}
-	  {% endif %}
+		{% if errors is defined and errors|length > 0 %}
+			{% for error in errors %}
+				{% if error.getMessagePluralization() is null %}
+					<span class="help-inline error">{{ error.messageTemplate|trans(error.messageParameters, 'validators') }}</span>
+				{% else %}
+					<span class="help-inline error">{{ error.messageTemplate|transchoice(error.getMessagePluralization, error.messageParameters, 'validators') }}</span>
+				{% endif %}
+			{% endfor %}
+		{% endif %}
 	{% endspaceless %}
 {% endblock field_errors %}
 

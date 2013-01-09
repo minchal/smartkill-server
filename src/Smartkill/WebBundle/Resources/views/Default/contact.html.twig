@@ -5,29 +5,22 @@
 
 {% block content %}
 
-<div class="row">
+<div class="row-fluid">
 	<div class="span8">
 		<div class="block">
 			<h2>Kontakt</h2>
 			
-			{% if app.session.hasFlash('notice') %}
-			    <div class="alert alert-success alert-block">
-					{{ app.session.flash('notice') }}
-				</div>
-			{% endif %}
-
 			<p>Masz pytania, uwagi lub chcesz nam powiedzieć jak Ci się grało w SmartKilla? 
 			Po prostu napisz do nas.</p>
-			
-			<div class="row-fluid">
-				<div class="span14">
-					<form action="{{ path('contact')}}" method="post" {{ form_enctype(form) }} class="form-horizontal form-tight">
-						{{ form_widget(form) }}
-						
-						<button class="btn btn-primary btn-large pull-right" type="submit">Wyślij</button>
-					</form>
-				</div>
-			</div>
+			<br />
+			<form action="{{ path('contact')}}" method="post" {{ form_enctype(form) }} class="form-horizontal">
+				{{ form_row(form.name) }}
+				{{ form_row(form.email) }}
+				{{ form_row(form.subject) }}
+				{{ form_row(form.msg, {attr:{rows:8}}) }}
+					
+				<button class="btn btn-primary btn-large pull-right" type="submit">Wyślij</button>
+			</form>
 		</div>
 	</div>
 	<div class="span4">
