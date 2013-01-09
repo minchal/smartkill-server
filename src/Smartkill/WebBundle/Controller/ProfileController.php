@@ -30,28 +30,13 @@ class ProfileController extends Controller {
 	}
 	
 	public function indexAction() {
-		$em = $this->getDoctrine()->getManager();
-		$repoUser  = $em->getRepository('SmartkillWebBundle:User');
-		$repoMatch = $em->getRepository('SmartkillWebBundle:Match');
-		
+		$em   = $this->getDoctrine()->getManager();
 		$user = $this->getUser();
 		
-		$query = $repoMatch->createQueryBuilder('m')
-			->innerJoin('m.players','p','WITH','p.user = :user')
-			->andWhere('m.status = :status')
-			->andWhere('m.dueDate > :date')
-			->orderBy('m.dueDate','ASC')
-			->setParameter('user', $this->getUser())
-			->setParameter('status', Match::PLANED)
-			->setParameter('date', new \DateTime())
-			->setMaxResults(1)
-			->getQuery()
-		;
-		
         return $this->render('SmartkillWebBundle:Profile:index.html.twig', array(
-        	'entity' => $user,
-        	'position' => $repoUser->getPosition($user),
-        	'match' => $query->getSingleResult(),
+        	'entity'   => $user,
+        	'position' => $em->getRepository('SmartkillWebBundle:User')->getPosition($user),
+        	'match'    => $em->getRepository('SmartkillWebBundle:Match')->getNextUserMatch($user),
         ));
 	}
 	
