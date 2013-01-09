@@ -27,4 +27,26 @@ class MatchController extends Controller {
 		
 		return $this -> jsonResponse(array('matches'=>$matches));
     }
+    
+    public function startAction() {
+    	$session = $this->checkSession();
+    	
+    	if (!$session) {
+    		return $this->sessionNotFound();
+    	}
+    
+    	$match = $this->getRepository('SmartkillWebBundle:Match')->find($this->getRequest()->get('match'));
+    	
+    	if (!$match) {
+    		return $this -> errorResponse('Match not found');
+    	}
+    	
+    	if($session->getUser() != $match->getCreatedBy()) {
+    		return $this -> errorResponse('Access denied');
+    	}
+    	
+    	$match -> start($this->getManager());
+    
+    	return $this -> jsonResponse();
+    }
 }

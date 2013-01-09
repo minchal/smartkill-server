@@ -1,6 +1,6 @@
 <?php
-$session = '3a8bb479929012620f9af1b8ab40f161';
-$match   = '1';
+$session = 'ddc20b1a7bb1eb20b5eefd3a59f458ff';
+$match   = '2';
 $lat     = '51.20';
 $lng     = '19.20';
 
@@ -13,3 +13,8 @@ $page = curl_exec($c);
 curl_close($c);
 
 echo '<pre>'.htmlspecialchars($page);
+
+/*
+ * example:
+ * {"status":"success","positions":[{"user":2,"match":2,"type":"prey","offense":0,"disqualification":false,"points_prey":0,"points_hunter":0}]}
+ */
