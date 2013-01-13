@@ -1,6 +1,6 @@
 <?php
-$session = 'ddc20b1a7bb1eb20b5eefd3a59f458ff';
-$match   = '2';
+$session = 'ddc20b1a7bb1eb20b5eefd3a59f458ff';//7918c9784e0a21ea5e72b35cfa9303b1
+$match   = '3';
 $lat     = '51.20';
 $lng     = '19.20';
 
@@ -16,5 +16,5 @@ echo '<pre>'.htmlspecialchars($page);
 
 /*
  * example:
- * {"status":"success","positions":[{"user":2,"match":2,"type":"prey","offense":0,"disqualification":false,"points_prey":0,"points_hunter":0}]}
+ * {"status":"success","positions":[{"user":2,"match":2,"type":"prey","offense":0,"disqualification":false,"points_prey":0,"points_hunter":0,"alive":false}]}
  */

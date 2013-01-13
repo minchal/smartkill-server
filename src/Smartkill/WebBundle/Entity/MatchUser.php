@@ -70,6 +70,11 @@ class MatchUser {
      * @ORM\Column(name="points_hunter", type="integer")
      */
     private $pointsHunter = 0;
+    
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $alive = true;
 	
     public function getUserId()
     {
@@ -309,5 +314,28 @@ class MatchUser {
     public function getPointsHunter()
     {
         return $this->pointsHunter;
+    }
+
+    /**
+     * Set alive
+     *
+     * @param boolean $alive
+     * @return MatchUser
+     */
+    public function setAlive($alive)
+    {
+        $this->alive = $alive;
+    
+        return $this;
+    }
+
+    /**
+     * Get alive
+     *
+     * @return boolean 
+     */
+    public function getAlive()
+    {
+        return $this->alive;
     }
 }

@@ -149,6 +149,8 @@ class MatchUserController extends Controller {
 		$hunter = $mu2->getUser();
 		$match  = $mu2->getMatch();
 		
+		$mu->setAlive(false);
+		
 		$event = new EventCatch();
 		$event->setMatch($match);
 		$event->setHunter($hunter);
