@@ -16,6 +16,11 @@ class MatchUser {
 	const TYPE_HUNTER = 'hunter';
 	
     /**
+     * @Annotation\Accessor(getter="getUsername")
+     */
+    protected $username;
+    
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Smartkill\WebBundle\Entity\User", inversedBy="playedMatches")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
@@ -76,6 +81,11 @@ class MatchUser {
      */
     private $alive = true;
 	
+    public function getUsername()
+    {
+    	return $this->getUser() ? $this->getUser()->getUsername() : null;
+    }
+    
     public function getUserId()
     {
     	return $this->getUser() ? $this->getUser()->getId() : null;

@@ -29,6 +29,9 @@ class MatchUserController extends Controller {
 			return $this -> errorResponse('User invalid');
 		}
 		
+		$user = $this->getRepository('SmartkillWebBundle:MatchUser')
+			->findOneBy(array('match' => $match, 'user' => $session->getUser()));
+		
 		$positions = $this->getRepository('SmartkillWebBundle:MatchUser')
 			->createQueryBuilder('mu')
 			->where('mu.match = :match AND NOT mu.user = :user')
@@ -38,11 +41,14 @@ class MatchUserController extends Controller {
 			->getQuery()
 			->getResult();
 		
+		if (!$user) {
+			return $this -> errorResponse('User not in match');
+		}
 		if (!$positions) {
 			return $this -> errorResponse('Match invalid');
 		}
 		
-		return $this -> jsonResponse(array('positions'=>$positions));
+		return $this -> jsonResponse(array('user'=>$user, 'positions'=>$positions));
     }
     
     public function updatePositionAction($user, $match, $lat, $lng) {
