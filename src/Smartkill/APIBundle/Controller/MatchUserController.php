@@ -153,6 +153,10 @@ class MatchUserController extends Controller {
 			return $this -> errorResponse('User not in match');
 		}
 		
+		if (!$mu->getAlive()) {
+			return $this -> errorResponse('Prey already hunted!');
+		}
+		
 		$hunter = $mu2->getUser();
 		$match  = $mu2->getMatch();
 		
