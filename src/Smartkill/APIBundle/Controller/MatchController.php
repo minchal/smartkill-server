@@ -3,6 +3,7 @@
 namespace Smartkill\APIBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
+use Smartkill\WebBundle\Entity\Match;
 
 class MatchController extends Controller {
 	
@@ -45,8 +46,38 @@ class MatchController extends Controller {
     		return $this -> errorResponse('Access denied');
     	}
     	
+    	if ($match->getStatus() != Match::PLANED) {
+			return $this -> errorResponse('Match already started!');
+		}
+    	
     	$match -> start($this->getManager());
+    	
+    	return $this -> jsonResponse();
+    }
     
+    public function finishAction() {
+    	$session = $this->checkSession();
+    	
+    	if (!$session) {
+    		return $this->sessionNotFound();
+    	}
+    
+    	$match = $this->getRepository('SmartkillWebBundle:Match')->find($this->getRequest()->get('match'));
+    	
+    	if (!$match) {
+    		return $this -> errorResponse('Match not found');
+    	}
+    	
+    	if($session->getUser() != $match->getCreatedBy()) {
+    		return $this -> errorResponse('Access denied');
+    	}
+    	
+    	if ($match->getStatus() != Match::GOINGON) {
+			return $this -> errorResponse('Match not started yet!');
+		}
+    	
+    	$match -> finish($this->getManager());
+    	
     	return $this -> jsonResponse();
     }
 }

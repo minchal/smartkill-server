@@ -17,6 +17,10 @@ api_matches:
 api_start:
     pattern:  /start
     defaults: { _controller: SmartkillAPIBundle:Match:start } 
+    
+api_finish:
+    pattern:  /finish
+    defaults: { _controller: SmartkillAPIBundle:Match:finish } 
 
 api_position:
     pattern:  /position

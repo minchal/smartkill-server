@@ -7,6 +7,7 @@ use Symfony\Component\EventDispatcher\Event;
 use Doctrine\ORM\NoResultException;
 
 use Smartkill\WebBundle\Entity\MatchUser;
+use Smartkill\WebBundle\Entity\Match;
 use Smartkill\WebBundle\Entity\EventCatch;
 
 class MatchUserController extends Controller {
@@ -155,7 +156,12 @@ class MatchUserController extends Controller {
 		$hunter = $mu2->getUser();
 		$match  = $mu2->getMatch();
 		
+		if ($match->getStatus() != Match::GOINGON) {
+			return $this -> errorResponse('Match not started yet!');
+		}
+		
 		$mu->setAlive(false);
+		$mu2->setPointsHunter($mu2->getPointsHunter()+1);
 		
 		$event = new EventCatch();
 		$event->setMatch($match);

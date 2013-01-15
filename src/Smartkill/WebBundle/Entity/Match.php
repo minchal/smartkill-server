@@ -248,7 +248,19 @@ class Match {
 		$this->status = self::FINISHED;
 		$em -> persist($this);
 		
+		$hunters = 0;
 		foreach($this->getPlayers() as $mu) {
+			if ($mu->getType() == MatchUser::TYPE_HUNTER) {
+				$hunters++;
+			}
+		}
+		
+		foreach($this->getPlayers() as $mu) {
+			// ofiry dostają tyle punktów, ilu jest łowców, jeśli przetrwali
+			if ($mu->getType() == MatchUser::TYPE_PREY && $mu->getAlive()) {
+				$mu->setPointsPrey($hunters);
+			}
+			
 			$u = $mu -> getUser();
 			$u -> setPointsHunter($u->getPointsHunter() + $mu->getPointsHunter());
 			$u -> setPointsPrey($u->getPointsPrey() + $mu->getPointsPrey());
@@ -259,6 +271,7 @@ class Match {
 				$u -> setMatchesPrey($u->getMatchesPrey() + 1);
 			}
 			
+			$em -> persist($mu);
 			$em -> persist($u);
 		}
 		
